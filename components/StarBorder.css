@@ -1,0 +1,54 @@
+.star-border-container {
+  display: inline-block;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.star-border-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  pointer-events: none;
+  z-index: 1;
+  border: 1.5px solid transparent;
+  background: conic-gradient(from 0deg, 
+    rgba(255,255,255,0.08) 0%, 
+    rgba(255,255,255,0.08) 40%, 
+    #a259f7 55%, /* purple shine */
+    rgba(255,255,255,0.08) 70%,
+    rgba(255,255,255,0.08) 100%
+  );
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: border-shine-rotate 4s linear infinite;
+  transition: background 0.3s;
+}
+
+.inner-content {
+  position: relative;
+  background: #181028;
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  padding: 24px 26px;
+  border-radius: 20px;
+  z-index: 2;
+  border: 1.5px solid rgba(255,255,255,0.08);
+}
+
+@keyframes border-shine-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} 

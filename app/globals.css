@@ -2,26 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@font-face {
+  font-family: 'Compressa VF';
+  src: url('https://res.cloudinary.com/dr6lvwubh/raw/upload/v1529908256/CompressaPRO-GX.woff2');
+  font-style: normal;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.text-pressure-title {
+  color: #ffffff;
+}
+.flex {
+  display: flex;
+  justify-content: space-between;
+}
+.stroke span {
+  position: relative;
+  color: #ffffff;
+}
+.stroke span::after {
+  content: attr(data-char);
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: transparent;
+  z-index: -1;
+  -webkit-text-stroke-width: 3px;
+  -webkit-text-stroke-color: #FF0000;
+}
+
+@keyframes arrow-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 5px #763cac) brightness(1.2);
+  }
+  33% {
+    filter: drop-shadow(0 0 15px #7127ba) brightness(1.6);
+  }
+  66% {
+    filter: drop-shadow(0 0 10px #320f85) brightness(1.4);
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
   }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.arrow-effects {
+  animation: arrow-glow 2s ease-in-out infinite;
+}
+
+.pulsing-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.border-shine-animate {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.border-shine-animate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  border: 2px solid transparent;
+  background: linear-gradient(120deg, #763cac 10%, #fff 50%, #763cac 90%);
+  background-size: 200% 200%;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: borderShineSweep 2.5s linear infinite;
+}
+
+@keyframes borderShineSweep {
+  0% { background-position: 200% 0; }
+  100% { background-position: 0 200%; }
 }

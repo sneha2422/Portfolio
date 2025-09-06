@@ -1,0 +1,22 @@
+.scrolling-text {
+  overflow: hidden;
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  background-color: #11071F;
+  padding: 20px 0;
+}
+.scrolling-text .rail {
+  display: flex;
+}
+/* Ensure these styles are applied */
+.scrolling-text .rail h4 {
+  white-space: nowrap;
+  font-size: 48px !important;
+  font-weight: 500;
+  letter-spacing: 2px;
+  line-height: 1em;
+  margin: 0 50px 0 0;
+  color: #FFFFFF !important;
+} 
