@@ -1079,7 +1079,7 @@ export default function Portfolio() {
           </svg>
         </span>
                   </div>
-                  <a href="./sneha_venkatesh_resume.pdf" download className="px-6 py-3 rounded-full bg-[#763CAC] text-white font-bold shadow-lg hover:bg-white hover:text-[#763CAC] transition flex items-center gap-2 mt-4 self-center">
+                  <a href="./Sneha_venkatesh_resume.pdf" download className="px-6 py-3 rounded-full bg-[#763CAC] text-white font-bold shadow-lg hover:bg-white hover:text-[#763CAC] transition flex items-center gap-2 mt-4 self-center">
                     <span className="text-xl">Resume</span>
                   </a>
                 </div> 
