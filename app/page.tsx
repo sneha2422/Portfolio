@@ -708,7 +708,7 @@ export default function Portfolio() {
               onMouseLeave={() => setCursorVariant("default")}
             >
               {index === 0 ? (
-                <video src="/Ai_video.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
+                <video src="/AI_video.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : index === 1 ? (
                 <video src="/Travel_video.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : index === 2 ? (
