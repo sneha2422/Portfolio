@@ -279,6 +279,20 @@ export default function Portfolio() {
     }
   }, [])
 
+  const gooeyNav = (
+    <div style={{ position: "relative" }}>
+      <GooeyNav
+        items={navItems}
+        particleCount={15}
+        particleDistances={[90, 10]}
+        particleR={100}
+        initialActiveIndex={0}
+        animationTime={600}
+        timeVariance={300}
+        colors={[1, 2, 3, 1, 2, 3, 1, 4]}
+      />
+    </div>
+  );
   // Social media data
   const socialLinks = [
     {
@@ -412,32 +426,10 @@ export default function Portfolio() {
               threshold={0.1}
               delay={0.3}
             >
-              <div style={{ position: "relative" }}>
-                <GooeyNav
-                  items={navItems}
-                  particleCount={15}
-                  particleDistances={[90, 10]}
-                  particleR={100}
-                  initialActiveIndex={0}
-                  animationTime={600}
-                  timeVariance={300}
-                  colors={[1, 2, 3, 1, 2, 3, 1, 4]}
-                />
-              </div>
+              {gooeyNav}
             </AnimatedContent>
           ) : (
-            <div style={{ position: "relative" }}>
-              <GooeyNav
-                items={navItems}
-                particleCount={15}
-                particleDistances={[90, 10]}
-                particleR={100}
-                initialActiveIndex={0}
-                animationTime={600}
-                timeVariance={300}
-                colors={[1, 2, 3, 1, 2, 3, 1, 4]}
-              />
-            </div>
+            gooeyNav
           )}
         </nav>
       </FadeContent>
