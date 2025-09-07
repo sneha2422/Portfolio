@@ -708,11 +708,11 @@ export default function Portfolio() {
               onMouseLeave={() => setCursorVariant("default")}
             >
               {index === 0 ? (
-                <video src="/ai_video.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
+                <video src="/Ai_video.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : index === 1 ? (
-                <video src="/travel_video.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
+                <video src="/Travel_video.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : index === 2 ? (
-                <video src="/break_his_video.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
+                <video src="/Break_his_video.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : index === 3 ? (
                 <video src="/credit_card_fraud_detection.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : (
@@ -773,7 +773,7 @@ export default function Portfolio() {
   {/* Push image below heading */}
   <div className="flex justify-center">
     <Image
-      src="/tech.png"
+      src="/Tech.png"
       alt="Tech Stack Section"
       width={1200}
       height={100}
