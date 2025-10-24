@@ -618,7 +618,7 @@ export default function Portfolio() {
                   <Image src="/oval-vector.png" alt="Oval Vector" width={400} height={100} className="absolute -left-4 -top-12 object-contain opacity-70" />
                   <div className="relative z-10 leading-tight text-left" style={{ fontFamily: "Kantumruy, sans-serif", fontSize: "48px", fontWeight: "normal" }}>
                     <BlurText
-                      text="AI Agent Builder."
+                      text="Aspiring Product Manager."
                       delay={200}
                       animateBy="words"
                       direction="bottom"
@@ -812,7 +812,7 @@ export default function Portfolio() {
         {/* CurvedLoop text */}
         <div className="w-full flex items-center justify-center relative z-10" style={{ minHeight: '100px' }}>
           <CurvedLoop
-            marqueeText="AI integration with v0 ✦ Bolt ✦ Lovable ✦ Cursor ✦ AI agent building using LangChain ✦ CrewAI ✦ AutoGen ✦ Botpress ✦ AI integration with v0 ✦ Bolt ✦ Lovable ✦ Cursor ✦ AI agent building using LangChain ✦ CrewAI ✦ AutoGen ✦ Botpress ✦"
+            marqueeText="AI integration with v0 ✦ Figma ✦ Lovable ✦ Cursor ✦ Jira ✦ Miro ✦ AutoGen ✦ Excel ✦ PowerBI ✦ Data Analysis ✦ Agile Methodologies ✦ SQL ✦ AI/ML Fundamentals ✦ User Research ✦ Ui/Ux Principles ✦ Cross Functional Collabration ✦"
             speed={2}
             curveAmount={400}
             direction="left"
@@ -832,15 +832,15 @@ export default function Portfolio() {
           <div className="flex flex-col justify-center items-center w-full md:w-1/2 h-[550px]">
             <StarBorder color="#40305A" speed="3s" thickness={1.5} className="w-full max-w-xl">
               <DecryptedText
-                text="I'm that person who actually enjoys getting stuck on a bug at 2am—because I know the 'aha!' moment is coming."
+                text="I'm that person who actually enjoys wrestling with user insights and refining the design hypothesis until 2 am—because I know the 'aha!' moment is coming."
                 animateOn="hover"
                 className="text-white text-[20px] font-sans text-center leading-snug mb-2"
                 parentClassName="w-full"
                 encryptedClassName="text-white"
               />
-              <ShinyText text="Right now, I'm deep in the world of Computer Science, juggling code, curiosity, and a rotation of coffee by day and cocktails by night as I build, break, and rebuild everything from web apps to wild side projects." speed={4} className="text-[16px] text-center leading-snug" />
-              <ShinyText text="For me, design isn't just about making things look good—it's about telling a story. Every project is a chance to blend art and technology, crafting digital experiences that people don't just use, but remember. And when a design finally comes alive through development? That's when the real magic happens—think 'abracadabra, alakazam!' and suddenly, your ideas leap off the screen. It's the kind of moment that makes you grin at your laptop and wonder if you just cast a spell." speed={4.5} className="text-[16px] text-center leading-snug" />
-              <ShinyText text="Lately, I've been diving headfirst into the world of AI, building agents and experimenting with new ways to make technology smarter, more creative, and a lot more fun. I love exploring how AI can turn wild ideas into reality and make both work and life a little easier (and a lot more interesting)." speed={5} className="text-[16px] text-center leading-snug" />
+              <ShinyText text="Right now, I'm deep in the world of Computer Science, juggling User Research, curiosity, and a rotation of coffee by day and cocktails by night , I view the world as a place where imagination meets implementation, and I'm the Conductor who makes the whole show sing!." speed={4} className="text-[16px] text-center leading-snug" />
+              <ShinyText text="For me, design isn't just about making things look good—it's about telling a story. Every project is a chance to blend art and technology, crafting digital experiences that people don't just use, but remember. And when a design finally comes alive as a whole Product? That's when the real magic happens—think 'abracadabra, alakazam!' and suddenly, your ideas leap off the screen. It's the kind of moment that makes you grin at your laptop and wonder if you just cast a spell." speed={4.5} className="text-[16px] text-center leading-snug" />
+              <ShinyText text="My natural ability to lead and organize—from running student bodies to managing events—is my baseline for Stakeholder Management and Cross-Functional Leadership.I combine this with a Data-Driven Strategy mindset, using Analytics and A/B testing like magic wands to transform complex user pain points into elegant, valuable product solutions. " speed={5} className="text-[16px] text-center leading-snug" />
               <ShinyText text="Curiosity keeps me experimenting, learning, and always up for a new challenge. If you're into blending ideas, building unforgettable things, and sharing a laugh or two along the way, let's connect." speed={5.5} className="text-[16px] text-center leading-snug" />
             </StarBorder>
           </div>
@@ -848,7 +848,7 @@ export default function Portfolio() {
           <div className="flex justify-center md:justify-start items-center w-full md:w-1/3 md:-ml-8 h-[550px]">
             <ProfileCard
               name="Sneha Venkatesh"
-              title="Developer.Designer.Ai.Agent Builder "
+              title="Developer.Designer.Aspiring Product Manager"
               handle="sneha2422"
               status="Online"
               contactText="Contact Me"
@@ -1058,11 +1058,11 @@ export default function Portfolio() {
                   Open For
                 </h3>
                 <ul className="flex flex-col gap-2 w-full items-center">
-                  <li className="flex items-center text-white text-base gap-2"><span>💻</span> Developer Roles</li>
+                  <li className="flex items-center text-white text-base gap-2"><span>💻</span>Associate Product Manager</li>
                   <li className="flex items-center text-white text-base gap-2"><span>🎨</span> Design Internships</li>
                   <li className="flex items-center text-white text-base gap-2"><span>🤝</span> Side Projects & Collaborations</li>
                   <li className="flex items-center text-white text-base gap-2"><span>💼</span> Freelance UI/UX Work</li>
-                  <li className="flex items-center text-white text-base gap-2"><span>🤖</span> AI Agent Building</li>
+                  <li className="flex items-center text-white text-base gap-2"><span>🤖</span> Project Management</li>
                 </ul>
                 <div className="flex flex-col items-center mt-2 mb-0">
                   <div className="relative flex items-center justify-center" style={{ width: '64px', height: '64px' }}>
