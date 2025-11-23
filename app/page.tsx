@@ -181,6 +181,28 @@ export default function Portfolio() {
         { name: "Confusion Matrix" },
       ],
     },
+    {
+      title: "YourFirstStep: Career Guidance Platform",
+      description: "YourFirstStep is a full-stack web platform designed to assist students in navigating career uncertainty. It addresses course selection confusion by offering structured, interactive assessments—based on authorized Coursera material—and personalized domain recommendations. The platform features a fully client-side quiz for instant, zero-latency evaluation, a dynamic dashboard for results, and a modern UI built with shadcn/ui and Tailwind CSS. It bridges the gap between academic interests and real-world job market data, acting as an intelligent and accessible tool for career exploration.",
+      image: "/project-5.png", // Placeholder image
+      link: "https://your-first-step.vercel.app/",
+      techTags: [
+        { name: "Next.js 15" },
+        { name: "Next.js API Routes" },
+        { name: "React 19" },
+        { name: "TypeScript" },
+        { name: "React Hooks" },
+        { name: "Tailwind CSS" },
+        { name: "shadcn/ui" },
+        { name: "next-themes" },
+        { name: "cmdk" },
+        { name: "Lucide React" },
+        { name: "Node.js" },
+        { name: "pnpm" },
+        { name: "UI/UX Design" },
+        { name: "Coursera API" },
+      ],
+    },
   ]
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -715,6 +737,8 @@ export default function Portfolio() {
                 <video src="/Break_his_video.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : index === 3 ? (
                 <video src="/credit_card_fraud_detection.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
+              ) : index === 4 ? (
+                <video src="/Your first step.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : (
                 <Image 
                   src={project.image} 
