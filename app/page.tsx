@@ -632,7 +632,7 @@ export default function Portfolio() {
 
                 {/* Developer. Designer. with BlurText animation - forced on same line */}
                 <div className="text-white leading-tight whitespace-nowrap text-left" style={{ fontFamily: "Kantumruy, sans-serif", fontSize: "48px", fontWeight: "normal" }}>
-                  <BlurText text="Designer. Developer." delay={150} animateBy="words" direction="top" loop={true} loopDelay={6000} />
+                  <BlurText text="Product Designer." delay={150} animateBy="words" direction="top" loop={true} loopDelay={6000} />
                 </div>
 
                 {/* AI Agent Builder with Oval Vector Background and BlurText animation */}
@@ -640,7 +640,7 @@ export default function Portfolio() {
                   <Image src="/oval-vector.png" alt="Oval Vector" width={400} height={100} className="absolute -left-4 -top-12 object-contain opacity-70" />
                   <div className="relative z-10 leading-tight text-left" style={{ fontFamily: "Kantumruy, sans-serif", fontSize: "48px", fontWeight: "normal" }}>
                     <BlurText
-                      text="Aspiring Product Manager."
+                      text="Full-Stack Developer"
                       delay={200}
                       animateBy="words"
                       direction="bottom"
@@ -836,7 +836,7 @@ export default function Portfolio() {
         {/* CurvedLoop text */}
         <div className="w-full flex items-center justify-center relative z-10" style={{ minHeight: '100px' }}>
           <CurvedLoop
-            marqueeText="AI integration with v0 ✦ Figma ✦ Lovable ✦ Cursor ✦ Jira ✦ Miro ✦ AutoGen ✦ Excel ✦ PowerBI ✦ Data Analysis ✦ Agile Methodologies ✦ SQL ✦ AI/ML Fundamentals ✦ User Research ✦ Ui/Ux Principles ✦ Cross Functional Collabration ✦"
+            marqueeText="AI integration with v0 ✦ Figma ✦ Lovable ✦ Cursor ✦ Node.js ✦ React ✦ AutoGen ✦ Type Script ✦ Java Script ✦ Design Ideology ✦ Agile Methodologies  ✦ AI/ML Fundamentals ✦ User Research ✦ Ui/Ux Principles ✦ Cross Functional Collabration ✦"
             speed={2}
             curveAmount={400}
             direction="left"
@@ -1082,11 +1082,11 @@ export default function Portfolio() {
                   Open For
                 </h3>
                 <ul className="flex flex-col gap-2 w-full items-center">
-                  <li className="flex items-center text-white text-base gap-2"><span>💻</span>Associate Product Manager</li>
-                  <li className="flex items-center text-white text-base gap-2"><span>🎨</span> Design Internships</li>
+                  <li className="flex items-center text-white text-base gap-2"><span>💻</span> Product design</li>
+                  <li className="flex items-center text-white text-base gap-2"><span>🎨</span> Full-Stack Development</li>
                   <li className="flex items-center text-white text-base gap-2"><span>🤝</span> Side Projects & Collaborations</li>
-                  <li className="flex items-center text-white text-base gap-2"><span>💼</span> Freelance UI/UX Work</li>
-                  <li className="flex items-center text-white text-base gap-2"><span>🤖</span> Project Management</li>
+                  <li className="flex items-center text-white text-base gap-2"><span>💼</span> Freelance Work</li>
+                  <li className="flex items-center text-white text-base gap-2"><span>🤖</span> Product Management</li>
                 </ul>
                 <div className="flex flex-col items-center mt-2 mb-0">
                   <div className="relative flex items-center justify-center" style={{ width: '64px', height: '64px' }}>
