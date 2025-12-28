@@ -872,7 +872,7 @@ export default function Portfolio() {
           <div className="flex justify-center md:justify-start items-center w-full md:w-1/3 md:-ml-8 h-[550px]">
             <ProfileCard
               name="Sneha Venkatesh"
-              title="Developer.Designer.Aspiring Product Manager"
+              title="Product Designer. Full-Stack Developer"
               handle="sneha2422"
               status="Online"
               contactText="Contact Me"
