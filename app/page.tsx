@@ -89,19 +89,23 @@ export default function Portfolio() {
   const [rotateX, setRotateX] = useState(0)
   const [rotateY, setRotateY] = useState(0)
   const [navAnimated, setNavAnimated] = useState(true) // Default to true to prevent flash
-  const [clickedIcon, setClickedIcon] = useState<string | null>(null)
   const [emailCopied, setEmailCopied] = useState(false)
   const [thankYou, setThankYou] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const [cursorVariant, setCursorVariant] = useState("default");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [activeCategory, setActiveCategory] = useState('Full Stack');
 
   const projectsData = [
     {
       title: "Ai Your Ranking Super Power ",
-      description: "Designed an intuitive and visually engaging SEO dashboard in Figma to simplify digital marketing workflows. The Project highlights key features such as user-friendly navigation, content evaluation, link optimization, visual reports, smart keyword generation, automated alerts, and competitor analysis. The design focuses on clarity, usability, and modern aesthetics, ensuring marketers can track and optimize SEO performance efficiently.",
+      description: "• Recognized that managing SEO performance across various tools presents a challenge for marketers, as it frequently necessitates switching between intricate platforms to track rankings, analyze competitors, and optimize content.\n\n" +
+      "• Using a user-friendly interface, structured data visualization, and easy navigation, I created an AI-powered SEO dashboard in Figma that streamlines digital marketing workflows.\n\n" +
+      "• Developed interactive wireframes and prototypes that highlighted features like competitor insights, automated alerts, smart keyword generation, visual analytics reports, and keyword performance tracking.\n\n" +
+      "• This project is unique in that it focuses on integrating AI-driven insights with an easy-to-use interface, allowing marketers to quickly comprehend SEO performance and make data-driven decisions without technical complexity.",
       image: "/image_1.png",
+      video: "/AI_video.mp4",
       link: "https://www.behance.net/gallery/209632955/AI-SUPER-POWER",
       techTags: [
         { name: "Figma"},
@@ -111,63 +115,56 @@ export default function Portfolio() {
         { name: "Visual Design" },
       
       ],
+      category: "UI/UX",
     },
     {
       title: "TravelMate",
-      description:
-        "TravelMate was built with a simple mission: to make travel safer, more social, and more enjoyable for everyone. In a world where solo travel is increasingly popular, we recognized the need for a platform that connects like-minded travelers." +
-        "With the rise of solo travel trends, especially among young adults and digital nomads, we identified three key challenges: safety concerns, complex planning, and the desire for authentic connections." +
-        "TravelMate solves these problems by creating a secure community of verified travelers, simplifying trip planning with collaborative tools, and facilitating meaningful connections between people who share a passion for exploration.",
+      description: "• Recognized the difficulties that solo travelers have to face safety issues, trouble locating reliable travel companions, and the difficulty of organizing trips using various platforms.\n\n" +
+      "• TravelMate was created as a social travel companion platform with an eye on providing a smooth experience that allows users to share plans, connect with verified travelers, and work together on trips through a single interface.\n\n" +
+      "• Developed the entire UI/UX design process in Figma, including wireframing, prototyping, user research, and high-fidelity interface design, guaranteeing user-friendly navigation and a community-driven experience.\n\n" +
+      "• TravelMate's focus on verified traveler communities and cooperative trip planning, integrating social networking and travel planning into a single platform to facilitate safer and more meaningful travel connections, is what makes it unique.",
       image: "/image_2.png",
+      video: "/Travel_video.mp4",
       link: "https://v0-travelmate-website.vercel.app/",
       techTags: [
-        { name: "React" },
-        { name: "Node.js (JavaScript)" },
         { name: "Figma" },
-        { name: "UI/UX Design" },
-        { name: "Prototyping" },
+        { name: "UX Research" },
         { name: "Wireframing" },
-        { name: "Visual Design" }
+        { name: "Prototyping" },
+        { name: "UI Design" },
+        { name: "Interaction Design" }
       ],      
+      category: "UI/UX",
     },
     {
       title: "Breast Cancer Classification using Deep Learning (BreakHis Dataset)",
-      description: "I developed a deep learning project on Breast Cancer Classification using the BreakHis " +
-      "histopathological image dataset, aiming to distinguish between benign and malignant tumor samples. "+
-      "The dataset included over 7,900 images across multiple magnification levels (40X, 100X, 200X, 400X), "+
-      "introducing challenges in feature extraction and generalization. I implemented and compared multiple "+
-      "architectures—ResNet50, VGG16, MobileNetV2, Vision Transformer (ViT), and a custom CNN—and evaluated "+
-      "them using metrics such as accuracy, precision, recall, F1-score, Grad-CAM, and SHAP analysis. "+
-      "Results showed that ViT achieved the highest accuracy (93.4%), while MobileNetV2 provided an efficient "+
-      "lightweight alternative, and the custom CNN performed competitively. The project highlights the " +
-      "complementary strengths of CNN- and transformer-based models, offering valuable insights into building "+
-      "robust, automated diagnostic tools for breast cancer detection.",
+      description: "• Developed a deep learning system to classify breast cancer histopathology images using the BreakHis dataset, which contains over 7,900 images across multiple magnification levels (40X, 100X, 200X, 400X).\n\n" +
+      "• Implemented and compared multiple architectures including ResNet50, VGG16, MobileNetV2, Vision Transformer (ViT), and a custom CNN using PyTorch, evaluating model performance with metrics such as accuracy, precision, recall, and F1-score.\n\n" +
+      "• Vision Transformer achieved the highest accuracy of 93.4%, while MobileNetV2 provided an efficient lightweight alternative; model interpretability was further analyzed using Grad-CAM and SHAP techniques.",
       image: "/project-3.png", // Assuming you have project-3.png
+      video: "/Break_his_video.mp4",
       link: "https://github.com/sneha2422/BREAST-CANCER-CLASSIFICATION-USING-DEEP-LEARNING-MODELS/tree/main",
       techTags: [
         { name: "Python" },
         { name: "PyTorch" },
         { name: "NumPy" },
         { name: "Pandas" },
-        { name: "Vision Transformer (ViT)" },
-        { name: "Scikit-learn" },
-        { name: "CNN" },
-        { name: "Matplotlib" },
-        { name: "Grad-CAM" },
-        { name: "SHAP" },
         { name: "ResNet50" },
         { name: "VGG16" },
         { name: "MobileNetV2" },
-       
+        { name: "Vision Transformer" },
+        { name: "Grad-CAM" },
+        { name: "SHAP" },  
       ],
+      category: "AI/ML",
     },
     {
       title: "Credit Card Fraud Detection",
-      description: "This project focuses on building a robust credit card fraud detection system using machine learning." +
-        "It addresses the challenge of a highly imbalanced dataset by employing **undersampling** to create a balanced training environment." +
-        "The final model, a fine-tuned XGBoost classifier, was able to effectively detect fraudulent transactions." +
-        "Its performance was validated through key metrics like F1-Score and a confusion matrix, which showed strong results in minimizing false negatives.",
+      description: "• Worked on the problem of accurately identifying fraudulent credit card transactions in a highly imbalanced financial dataset, where legitimate transactions significantly outnumber fraudulent ones.\n\n" +
+          "• Built a machine learning pipeline in Python using libraries such as Scikit-learn, Pandas, and NumPy, applying data preprocessing and undersampling techniques to balance the dataset and train a refined XGBoost classifier.\n\n" +
+          "• Evaluated the model using performance metrics including F1-Score and a confusion matrix, achieving strong results in detecting fraudulent transactions while effectively reducing false negatives.",
       image: "/project-4.png",
+      video: "/credit_card_fraud_detection.mp4",
       link: "https://github.com/sneha2422/Credit_card_fraud_detection",
       techTags: [
         { name: "Python" },
@@ -180,11 +177,16 @@ export default function Portfolio() {
         { name: "Undersampling" },
         { name: "Confusion Matrix" },
       ],
+      category: "AI/ML",
     },
     {
       title: "YourFirstStep: Career Guidance Platform",
-      description: "YourFirstStep is a full-stack web platform designed to assist students in navigating career uncertainty. It addresses course selection confusion by offering structured, interactive assessments—based on authorized Coursera material—and personalized domain recommendations. The platform features a fully client-side quiz for instant, zero-latency evaluation, a dynamic dashboard for results, and a modern UI built with shadcn/ui and Tailwind CSS. It bridges the gap between academic interests and real-world job market data, acting as an intelligent and accessible tool for career exploration.",
+      description: "• Due to a lack of guidance, floating resources, and a lack of awareness of actual job market opportunities and skill requirements, many students find it difficult to select the best career path.\n\n" +
+      "• YourFirstStep is a full-stack web platform designed to assist students in navigating career uncertainty. It addresses course selection confusion by offering structured, interactive assessments—based on authorized Coursera material—and personalized domain recommendations.\n\n" +
+      "• The platform features a fully client-side quiz for instant, zero-latency evaluation, a dynamic dashboard for results, and a modern UI built with shadcn/ui and Tailwind CSS.\n\n" +
+      "• It bridges the gap between academic interests and real-world job market data, acting as an intelligent and accessible tool for career exploration.",
       image: "/project-5.png", // Placeholder image
+      video: "/Your first step.mp4",
       link: "https://your-first-step.vercel.app/",
       techTags: [
         { name: "Next.js 15" },
@@ -202,8 +204,11 @@ export default function Portfolio() {
         { name: "UI/UX Design" },
         { name: "Coursera API" },
       ],
+      category: "Full Stack",
     },
   ]
+
+  const filteredProjects = projectsData.filter((project) => project.category === activeCategory);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
@@ -347,18 +352,6 @@ export default function Portfolio() {
     },
   ]
 
-  const handleSocialClick = (socialId: string, url: string) => {
-    setClickedIcon(socialId)
-
-    // Reset the clicked state after animation
-    setTimeout(() => {
-      setClickedIcon(null)
-    }, 600)
-
-    // Open the social media link
-    window.open(url, "_blank", "noopener,noreferrer")
-  }
-
   const handleCopyEmail = () => {
     navigator.clipboard.writeText("snehavenkatesh14@gmail.com");
     setEmailCopied(true);
@@ -458,80 +451,32 @@ export default function Portfolio() {
 
       <div id="home" className="flex relative">
         {/* New Social Media Sidebar - only in hero section, not fixed */}
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-        <div className="relative flex flex-col items-center justify-center space-y-6 px-7 py-8">            {/* Social Media Icons */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-6 px-11 -mt-12">
-              {socialLinks.map((social, index) => {
-                const IconComponent = social.icon
-                const isClicked = clickedIcon === social.id
-
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+        <div className="relative flex flex-col items-center justify-center space-y-6 px-7 py-8">           
+           {/* Social Media Icons */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-6 px-11 -mt-12 ml-4">
+              {socialLinks.map((social) => {
+                const IconComponent = social.icon;
                 return (
-                  <motion.div
+                  <motion.a
                     key={social.id}
-                    className="relative cursor-pointer"
-                    onClick={() => handleSocialClick(social.id, social.url)}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    animate={
-                      isClicked
-                        ? {
-                            scale: [1, 1.3, 1],
-                            rotate: [0, 10, -10, 0],
-                          }
-                        : {}
-                    }
-                    transition={{ duration: 0.6, ease: "easeInOut" }}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.name}
+                    whileHover={{ scale: 1.2, transition: { duration: 0.2 } }}
+                    whileTap={{ scale: 0.9 }}
+                    className="relative w-12 h-12 rounded-full flex items-center justify-center"
                   >
-                    {/* Glow Effect */}
-                    {isClicked && (
-                      <motion.div
-                        className="absolute inset-0 rounded-full"
-                        style={{
-                          background: `radial-gradient(circle, ${social.color}40 0%, ${social.color}20 50%, transparent 70%)`,
-                          filter: "blur(8px)",
-                        }}
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 3, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        transition={{ duration: 0.6 }}
-                      />
-                    )}
-
-                    {/* Icon Container */}
-                    <div
-                      className={`relative w-12 h-12 rounded-full flex  items-center justify-center transition-all duration-300 ${
-                        isClicked ? "shadow-lg" : "hover:shadow-md"
-                      }`}
-                      style={{
-                        backgroundColor: isClicked ? social.color : "transperent",
-                        boxShadow: isClicked ? `0 0 20px ${social.color}60` : "none",
-                      }}
-                    >
-                      {social.id === "behance" ? (
-                        <span className="text-base font-bold flex flex-col items-center justify-center w-12 h-12" style={{ color: isClicked ? "white" : social.color }}>
-                          Be
-                        </span>
-                      ) : IconComponent ? (
-                        <span className="flex flex-col items-center justify-center w-12 h-12">
-                          <IconComponent size={22} style={{ color: isClicked ? "white" : social.color }} />
-                        </span>
-                      ) : null}
-                    </div>
-
-                    {/* Popup Label */}
-                    {isClicked && (
-                      <motion.div
-                        className="absolute left-12 top-1/2 transform -translate-y-1/2 bg-black/80 text-white px-2 py-1 rounded text-xs whitespace-nowrap"
-                        initial={{ opacity: 0, x: -10 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -10 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {social.name}
-                      </motion.div>
-                    )}
-                  </motion.div>
-                )
+                    {social.id === "behance" ? (
+                      <span className="text-base font-bold" style={{ color: social.color }}>
+                        Be
+                      </span>
+                    ) : IconComponent ? (
+                      <IconComponent size={22} style={{ color: social.color }} />
+                    ) : null}
+                  </motion.a>
+                );
               })}
             </div>
           </div>
@@ -674,7 +619,7 @@ export default function Portfolio() {
   style={{ backgroundColor: '#11071F' }}
 >
   <h2
-    className="text-3xl md:text-4xl font-bold text-white mb-16 text-center w-full"
+    className="text-3xl md:text-4xl font-bold text-white mb-4 text-center w-full"
     style={{ fontFamily: 'Jua, sans-serif', letterSpacing: '0.01em' }}
   >
     🎯 My Skills & Expertise
@@ -700,17 +645,42 @@ export default function Portfolio() {
 
 {/* Projects Section */}
 <section id="projects" className="w-full flex flex-col items-center py-20 px-4" style={{ backgroundColor: '#11071F' }}>
-  <div className="text-center mb-20">
+  <div className="text-center mb-4">
     <h2 className="text-4xl md:text-5xl font-bold text-white mb-4" style={{ fontFamily: 'Jua, sans-serif' }}>
     🚀 Projects
     </h2>
-    <p className="text-lg text-white/70" style={{ fontFamily: 'inherit' }}>
-      Selected Projects (4)
-    </p>
+  </div>
+
+  {/* Project Category Navigation */}
+  <div className="flex justify-center gap-48 mt-8 mb-16">
+    <button
+      className={`text-lg font-medium transition-all duration-300 uppercase tracking-wider pb-1 ${
+        activeCategory === 'Full Stack' ? 'text-white border-b-2 border-[#7127BA]' : 'text-white/60 hover:text-white'
+      }`}
+      onClick={() => setActiveCategory('Full Stack')}
+    >
+      Full Stack
+    </button>
+    <button
+      className={`text-lg font-medium transition-all duration-300 uppercase tracking-wider pb-1 ${
+        activeCategory === 'UI/UX' ? 'text-white border-b-2 border-[#7127BA]' : 'text-white/60 hover:text-white'
+      }`}
+      onClick={() => setActiveCategory('UI/UX')}
+    >
+      UI/UX
+    </button>
+    <button
+      className={`text-lg font-medium transition-all duration-300 uppercase tracking-wider pb-1 ${
+        activeCategory === 'AI/ML' ? 'text-white border-b-2 border-[#7127BA]' : 'text-white/60 hover:text-white'
+      }`}
+      onClick={() => setActiveCategory('AI/ML')}
+    >
+      AI/ML
+    </button>
   </div>
 
   <div className="w-full max-w-6xl mx-auto flex flex-col">
-    {projectsData.map((project, index) => (
+    {filteredProjects.map((project, index) => (
       <React.Fragment key={index}>
         <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] items-start gap-x-12 gap-y-6">
           {/* Left: Project Number */}
@@ -729,16 +699,8 @@ export default function Portfolio() {
               onMouseEnter={() => setCursorVariant("project")}
               onMouseLeave={() => setCursorVariant("default")}
             >
-              {index === 0 ? (
-                <video src="/AI_video.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
-              ) : index === 1 ? (
-                <video src="/Travel_video.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
-              ) : index === 2 ? (
-                <video src="/Break_his_video.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
-              ) : index === 3 ? (
-                <video src="/credit_card_fraud_detection.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
-              ) : index === 4 ? (
-                <video src="/Your first step.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
+              {project.video ? (
+                <video src={project.video} autoPlay loop muted playsInline className="w-full h-full object-cover" />
               ) : (
                 <Image 
                   src={project.image} 
@@ -753,7 +715,7 @@ export default function Portfolio() {
           {/* Details */}
           <div className="flex flex-col gap-4 px-2">
             <h3 className="text-3xl font-bold text-white" style={{ fontFamily: 'Jua, sans-serif' }}>{project.title}</h3>
-            <p className="text-white/80 leading-relaxed text-base min-h-[8rem]">{project.description}</p>
+            <p className="text-white/80 leading-relaxed text-base min-h-[8rem] whitespace-pre-line">{project.description}</p>
           </div>
 
           {/* Tech Stack */}
@@ -779,7 +741,7 @@ export default function Portfolio() {
           </div>
         </div>
         </div>
-        {index < projectsData.length - 1 && (
+        {index < filteredProjects.length - 1 && (
           <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-[#a259f7]/90 to-transparent my-20"></div>
         )}
       </React.Fragment>
@@ -790,7 +752,7 @@ export default function Portfolio() {
 
 {/* Tech Stack Section */}
 <section id="tech-stack" className="w-full flex flex-col items-center pt-20 pb-0 relative" style={{ backgroundColor: '#11071F' }}>
-  <h2 className="text-3xl md:text-4xl font-bold text-white mb-16 text-center w-full" 
+  <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center w-full" 
       style={{ fontFamily: 'Jua, sans-serif', letterSpacing: '0.01em' }}>
         💻 Tech Stack's
   </h2>
@@ -876,13 +838,13 @@ export default function Portfolio() {
               handle="sneha2422"
               status="Online"
               contactText="Contact Me"
-              avatarUrl="/profile-picture.jpg"
+              avatarUrl="/new_profile_picture.jpeg"
               showUserInfo={true}
               enableTilt={true}
               onContactClick={() => window.open('https://mail.google.com/mail/?view=cm&fs=1&to=snehavenkatesh14@gmail.com', '_blank', 'noopener,noreferrer')}
               behindGradient={undefined}
               innerGradient={undefined}
-              miniAvatarUrl="/profile-picture.jpg"
+              miniAvatarUrl="/new_profile_picture.jpeg"
             />
           </div>
         </div>
@@ -1032,7 +994,7 @@ export default function Portfolio() {
 
       {/* Testimonials Section */}
       <section id="testimonial" className="w-full flex flex-col items-center py-20 px-2" style={{ backgroundColor: '#11071F' }}>
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-16 text-center w-full" style={{ fontFamily: 'Jua, sans-serif', letterSpacing: '0.01em' }}>
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-8 text-center w-full" style={{ fontFamily: 'Jua, sans-serif', letterSpacing: '0.01em' }}>
           💬Testimonials
         </h2>
         <div className="w-full flex flex-col items-center">
@@ -1042,12 +1004,12 @@ export default function Portfolio() {
             <TestimonialCarousel testimonials={[
               {
                 quote: "Working with Sneha as a Product Designer was an absolute pleasure. She brought creativity, dedication, and a collaborative spirit to the table, making the whole process seamless and enjoyable. Her attention to detail and problem-solving abilities truly stood out..",
-                author: "Trisha",
+                author: "Trisha Mani ",
                 role: "Design Duh,Lead",
                 emoji: "💬"
               },
               {
-                quote: "Working with Sneha as a Product Designer was an absolute pleasure. She brought creativity, dedication, and a collaborative spirit to the table, making the whole process seamless and enjoyable. Her attention to detail and problem-solving abilities truly stood out..",
+                quote: "Sneha worked with us at Altacee, contributing to the design and development of modern web solutions while demonstrating a strong sense of ownership and creativity. She has a sharp eye for detail, a solid understanding of UI/UX principles, and the ability to translate ideas into practical, user-focused products. Sneha’s proactive approach, adaptability, and leadership potential make her someone who can add real value to any team she works with.",
                 author: "Aditya Kushwaha",
                 role: "Founder of Atlacee",
                 emoji: "💬"
@@ -1067,7 +1029,7 @@ export default function Portfolio() {
       {/* Side-by-Side Contact & Vertical Resume Section */}
       <section id="contact" className="w-full flex flex-col items-center py-20 px-2" style={{ backgroundColor: '#11071F' }}>
         {/* Main Heading and Subheading */}
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-16 text-center w-full" style={{ fontFamily: 'Jua, sans-serif', letterSpacing: '0.01em' }}>
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-8 text-center w-full" style={{ fontFamily: 'Jua, sans-serif', letterSpacing: '0.01em' }}>
         🤝 Let's Connect
         </h2>
         <p className="text-lg md:text-xl text-white/80 text-center mb-8 max-w-2xl" style={{ fontFamily: 'inherit' }}>
@@ -1086,7 +1048,7 @@ export default function Portfolio() {
                   <li className="flex items-center text-white text-base gap-2"><span>🎨</span> Full-Stack Development</li>
                   <li className="flex items-center text-white text-base gap-2"><span>🤝</span> Side Projects & Collaborations</li>
                   <li className="flex items-center text-white text-base gap-2"><span>💼</span> Freelance Work</li>
-                  <li className="flex items-center text-white text-base gap-2"><span>🤖</span> Product Management</li>
+
                 </ul>
                 <div className="flex flex-col items-center mt-2 mb-0">
                   <div className="relative flex items-center justify-center" style={{ width: '64px', height: '64px' }}>
@@ -1103,7 +1065,7 @@ export default function Portfolio() {
           </svg>
         </span>
                   </div>
-                  <a href="./Product_design&sneha_v.pdf" download className="px-6 py-3 rounded-full bg-[#763CAC] text-white font-bold shadow-lg hover:bg-white hover:text-[#763CAC] transition flex items-center gap-2 mt-4 self-center">
+                  <a href="./FullStack&Product_design_Sneha_v.pdf" download className="px-6 py-3 rounded-full bg-[#763CAC] text-white font-bold shadow-lg hover:bg-white hover:text-[#763CAC] transition flex items-center gap-2 mt-4 self-center">
                     <span className="text-xl">Resume</span>
                   </a>
                 </div> 

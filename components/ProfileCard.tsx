@@ -278,7 +278,7 @@ const ProfileCardComponent: React.FC<ProfileCardProps> = ({
               src={avatarUrl}
               alt={`${name || "User"} avatar`}
               loading="lazy"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit', display: 'block', padding: 0, margin: 0 }}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', borderRadius: 'inherit', display: 'block', padding: 0, margin: 0 }}
               onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = "none";
