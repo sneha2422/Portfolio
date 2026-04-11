@@ -106,7 +106,7 @@ export default function Portfolio() {
       "• Outcome: 91% of task completion rate across all 8 screens in usability testing; 64% of testers reported the Journal feature changed their spending mindset.",
       image: "/spend-smart.png", // Placeholder image
       video: "/case-study.mp4",
-      link: "#", // Placeholder link
+      link: "https://smart-spend-indol.vercel.app/", // Placeholder link
       techTags: [
         { name: "UI/UX Design" },
         { name: "Figma" },
