@@ -99,21 +99,21 @@ export default function Portfolio() {
 
   const projectsData = [
     {
-      title: "Ai Your Ranking Super Power ",
-      description: "• Recognized that managing SEO performance across various tools presents a challenge for marketers, as it frequently necessitates switching between intricate platforms to track rankings, analyze competitors, and optimize content.\n\n" +
-      "• Using a user-friendly interface, structured data visualization, and easy navigation, I created an AI-powered SEO dashboard in Figma that streamlines digital marketing workflows.\n\n" +
-      "• Developed interactive wireframes and prototypes that highlighted features like competitor insights, automated alerts, smart keyword generation, visual analytics reports, and keyword performance tracking.\n\n" +
-      "• This project is unique in that it focuses on integrating AI-driven insights with an easy-to-use interface, allowing marketers to quickly comprehend SEO performance and make data-driven decisions without technical complexity.",
-      image: "/image_1.png",
-      video: "/AI_video.mp4",
-      link: "https://www.behance.net/gallery/209632955/AI-SUPER-POWER",
+      title: "SpendSmart — Sprout",
+      description: "• Designed a minimal finance app for Gen-Z students who overspend and under-save — addressing the emotional and behavioral root causes, not just data tracking.\n\n" +
+      "• Key differentiators: Money Journal (emotion-tagged spending to build self-awareness), Vault (goal-locked savings), and gamified habits — features no competitor combines in a student-friendly UI.\n\n" +
+      "• Conducted competitive analysis against Walnut, YNAB, and Splitwise; identified a clear white space around journaling + vault saving + habit tracking for students aged 18–26.\n\n" +
+      "• Outcome: 91% of task completion rate across all 8 screens in usability testing; 64% of testers reported the Journal feature changed their spending mindset.",
+      image: "/spend-smart.png", // Placeholder image
+      video: "/case-study.mp4",
+      link: "#", // Placeholder link
       techTags: [
-        { name: "Figma"},
-        { name: "Ui/Ux Design" },
+        { name: "UI/UX Design" },
+        { name: "Figma" },
+        { name: "Competitive Analysis" },
+        { name: "User Research" },
         { name: "Prototyping" },
-        { name: "WireFraming" },
-        { name: "Visual Design" },
-      
+        { name: "Usability Testing" },
       ],
       category: "UI/UX",
     },
@@ -133,7 +133,26 @@ export default function Portfolio() {
         { name: "Prototyping" },
         { name: "UI Design" },
         { name: "Interaction Design" }
-      ],      
+      ],
+      category: "UI/UX",
+    },
+    {
+      title: "Ai Your Ranking Super Power ",
+      description: "• Recognized that managing SEO performance across various tools presents a challenge for marketers, as it frequently necessitates switching between intricate platforms to track rankings, analyze competitors, and optimize content.\n\n" +
+      "• Using a user-friendly interface, structured data visualization, and easy navigation, I created an AI-powered SEO dashboard in Figma that streamlines digital marketing workflows.\n\n" +
+      "• Developed interactive wireframes and prototypes that highlighted features like competitor insights, automated alerts, smart keyword generation, visual analytics reports, and keyword performance tracking.\n\n" +
+      "• This project is unique in that it focuses on integrating AI-driven insights with an easy-to-use interface, allowing marketers to quickly comprehend SEO performance and make data-driven decisions without technical complexity.",
+      image: "/image_1.png",
+      video: "/AI_video.mp4",
+      link: "https://www.behance.net/gallery/209632955/AI-SUPER-POWER",
+      techTags: [
+        { name: "Figma"},
+        { name: "Ui/Ux Design" },
+        { name: "Prototyping" },
+        { name: "WireFraming" },
+        { name: "Visual Design" },
+      
+      ],
       category: "UI/UX",
     },
     {
@@ -816,7 +835,7 @@ export default function Portfolio() {
         <div className="container mx-auto max-w-7xl w-full flex flex-col md:flex-row items-center md:items-stretch gap-7 justify-center">
           {/* Left: About Text */}
           <div className="flex flex-col justify-center items-center w-full md:w-1/2 h-[550px]">
-            <StarBorder color="#40305A" speed="3s" thickness={1.5} className="w-full max-w-xl">
+            <StarBorder color="#40305A" speed="3s" thickness={1.5} className="w-full max-w-xl py-4">
               <DecryptedText
                 text="I'm that person who actually enjoys wrestling with user insights and refining the design hypothesis until 2 am—because I know the 'aha!' moment is coming."
                 animateOn="hover"
@@ -1065,7 +1084,7 @@ export default function Portfolio() {
           </svg>
         </span>
                   </div>
-                  <a href="./FullStack&Product_design_Sneha_v.pdf" download className="px-6 py-3 rounded-full bg-[#763CAC] text-white font-bold shadow-lg hover:bg-white hover:text-[#763CAC] transition flex items-center gap-2 mt-4 self-center">
+                  <a href="./Product_design_dev_sneha.pdf" download className="px-6 py-3 rounded-full bg-[#763CAC] text-white font-bold shadow-lg hover:bg-white hover:text-[#763CAC] transition flex items-center gap-2 mt-4 self-center">
                     <span className="text-xl">Resume</span>
                   </a>
                 </div> 
