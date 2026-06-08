@@ -939,23 +939,23 @@ export default function Portfolio() {
           <div className="flex flex-col justify-center items-center w-full md:w-1/2 h-[550px]">
             <StarBorder color="#40305A" speed="3s" thickness={1.5} className="w-full max-w-xl py-4">
               <DecryptedText
-                text="I'm that person who actually enjoys wrestling with user insights and refining the design hypothesis until 2 am—because I know the 'aha!' moment is coming."
+                text="I build AI/ML systems end-to-end — from raw data and model architecture all the way to deployment to the user's screen."
                 animateOn="hover"
                 className="text-white text-[20px] font-sans text-center leading-snug mb-2"
                 parentClassName="w-full"
                 encryptedClassName="text-white"
               />
-              <ShinyText text="Right now, I'm deep in the world of Computer Science, juggling User Research, curiosity, and a rotation of coffee by day and cocktails by night , I view the world as a place where imagination meets implementation, and I'm the Conductor who makes the whole show sing!." speed={4} className="text-[16px] text-center leading-snug" />
-              <ShinyText text="For me, design isn't just about making things look good—it's about telling a story. Every project is a chance to blend art and technology, crafting digital experiences that people don't just use, but remember. And when a design finally comes alive as a whole Product? That's when the real magic happens—think 'abracadabra, alakazam!' and suddenly, your ideas leap off the screen. It's the kind of moment that makes you grin at your laptop and wonder if you just cast a spell." speed={4.5} className="text-[16px] text-center leading-snug" />
-              <ShinyText text="My natural ability to lead and organize—from running student bodies to managing events—is my baseline for Stakeholder Management and Cross-Functional Leadership.I combine this with a Data-Driven Strategy mindset, using Analytics and A/B testing like magic wands to transform complex user pain points into elegant, valuable product solutions. " speed={5} className="text-[16px] text-center leading-snug" />
-              <ShinyText text="Curiosity keeps me experimenting, learning, and always up for a new challenge. If you're into blending ideas, building unforgettable things, and sharing a laugh or two along the way, let's connect." speed={5.5} className="text-[16px] text-center leading-snug" />
+              <ShinyText text="I've worked across AI product companies, research-grade datasets, and fast-moving startup environments. My stack spans PyTorch, Scikit-learn, LangChain, RAG pipelines, and full-stack web — React, Next.js, Node.js — so I can own a feature from the model layer to the interface without handing off." speed={4} className="text-[16px] text-center leading-snug" />
+              <ShinyText text="When I'm not training models or building interfaces, I'm usually reading research papers, breaking things in Jupyter notebooks, or prototyping something new in Figma. I care about explainability — SHAP, Grad-CAM, and interpretable outputs matter to me as much as raw accuracy." speed={4.5} className="text-[16px] text-center leading-snug" />
+              <ShinyText text="I think in systems, not silos. Most people optimise for one layer — I hold the model, the backend, and the user experience in mind simultaneously. That cross-domain thinking means I catch problems others miss and ship solutions that actually hold together." speed={5} className="text-[16px] text-center leading-snug" />
+              <ShinyText text="Curiosity is my default state. If you are building something at the intersection of AI and real-world impact, let's talk." speed={5.5} className="text-[16px] text-center leading-snug" />
             </StarBorder>
           </div>
           {/* Right: Profile Card */}
           <div className="flex justify-center md:justify-start items-center w-full md:w-1/3 md:-ml-8 h-[550px]">
             <ProfileCard
               name="Sneha Venkatesh"
-              title="Product Designer. Full-Stack Developer"
+              title="AI/ML Engineer. Full-Stack Developer"
               handle="sneha2422"
               status="Online"
               contactText="Contact Me"
