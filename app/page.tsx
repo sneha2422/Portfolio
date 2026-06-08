@@ -26,6 +26,8 @@ import CurvedLoop from "../components/CurvedLoop";
 import Orb from "../components/Orb";
 import MagicBento from "../components/MagicBento";
 import { useRef } from "react";
+import SplitText from "../components/SplitText";
+import NeuralBackground from "../components/NeuralBackground";
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 
@@ -95,7 +97,52 @@ export default function Portfolio() {
   const [cursorVariant, setCursorVariant] = useState("default");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [activeCategory, setActiveCategory] = useState('Full Stack');
+  const [activeCategory, setActiveCategory] = useState('AI/ML');
+
+  // ── User Testimonials ──────────────────────────────────────────────
+  interface UserTestimonial { id: string; quote: string; author: string; role: string; emoji: string; }
+  const [userTestimonials, setUserTestimonials] = useState<UserTestimonial[]>([]);
+  const [showTForm, setShowTForm] = useState(false);
+  const [editingTId, setEditingTId] = useState<string | null>(null);
+  const [tForm, setTForm] = useState({ quote: '', author: '', role: '', emoji: '💬' });
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('sneha-portfolio-testimonials');
+      if (raw) setUserTestimonials(JSON.parse(raw));
+    } catch {}
+  }, []);
+
+  const persistUT = (list: UserTestimonial[]) => {
+    localStorage.setItem('sneha-portfolio-testimonials', JSON.stringify(list));
+    setUserTestimonials(list);
+  };
+
+  const openAddForm = () => {
+    setTForm({ quote: '', author: '', role: '', emoji: '💬' });
+    setEditingTId(null);
+    setShowTForm(true);
+  };
+
+  const openEditForm = (t: UserTestimonial) => {
+    setTForm({ quote: t.quote, author: t.author, role: t.role, emoji: t.emoji });
+    setEditingTId(t.id);
+    setShowTForm(true);
+  };
+
+  const submitTForm = () => {
+    if (!tForm.quote.trim() || !tForm.author.trim()) return;
+    if (editingTId) {
+      persistUT(userTestimonials.map(t => t.id === editingTId ? { ...t, ...tForm } : t));
+    } else {
+      persistUT([...userTestimonials, { id: Date.now().toString(), ...tForm }]);
+    }
+    setShowTForm(false);
+    setEditingTId(null);
+  };
+
+  const deleteUT = (id: string) => persistUT(userTestimonials.filter(t => t.id !== id));
+  // ──────────────────────────────────────────────────────────────────
 
   const projectsData = [
     {
@@ -154,6 +201,54 @@ export default function Portfolio() {
       
       ],
       category: "UI/UX",
+    },
+    {
+      title: "Terminal Voice Agent — Hands-Free AI Coding Interface",
+      description:
+        "• Built a fully hands-free voice interface that wraps aider, capturing spoken commands via microphone, transcribing in real-time using Groq Whisper (whisper-large-v3), and piping output directly to the AI coding agent's stdin — eliminating keyboard dependency entirely for developer workflows.\n\n" +
+        "• Engineered a modular three-component architecture — mic capture with push-to-talk and VAD modes, a subprocess bridge managing aider's stdin pipeline, and an orchestration loop with a voice-to-slash-command substitution table — all independently extensible.\n\n" +
+        "• Optimised end-to-end voice-to-action latency across the full pipeline; supports multiple LLMs including GPT-4o and Claude Sonnet, with zero API cost on Groq's free tier and full test coverage via mocked network calls.",
+      image: "/project-3.png",
+      video: "/voice agent.mp4",
+      link: "https://github.com/sneha2422/voice-agent",
+      techTags: [
+        { name: "Python" },
+        { name: "Groq Whisper" },
+        { name: "sounddevice" },
+        { name: "pynput" },
+        { name: "subprocess" },
+        { name: "aider-chat" },
+        { name: "PyTest" },
+        { name: "GPT-4o" },
+        { name: "Claude Sonnet" },
+      ],
+      category: "AI/ML",
+    },
+    {
+      title: "Explainable Hybrid Clinical Decision Support System (CDSS)",
+      description:
+        "• Identified that ICU clinicians are buried in false-positive alerts — a known patient-safety risk caused by ML models that optimise for accuracy rather than clinical relevance.\n\n" +
+        "• Built an end-to-end predictive pipeline on MIMIC-III/IV and UCI clinical datasets using an ensemble of Logistic Regression, Random Forest, and Decision Tree models, engineered for high-stakes healthcare environments.\n\n" +
+        "• Evaluated across Precision, Recall, and F1-Score with a fusion layer that validates every ML output against clinical guidelines before it surfaces as an alert — reducing noise without sacrificing sensitivity.\n\n" +
+        "• Applied SHAP and Grad-CAM for explainability — measurably reduced false-positive alerts and produced feature-level justifications that make predictions trustworthy to clinicians, not just interpretable to engineers.",
+      image: "/project-3.png",
+      video: "/cdci.mp4",
+      link: "https://github.com/sneha2422/CLINICAL-DECISION-SUPPORT-SYSTEM-CDSS-",
+      techTags: [
+        { name: "Python" },
+        { name: "Scikit-learn" },
+        { name: "Pandas" },
+        { name: "NumPy" },
+        { name: "MIMIC-III/IV" },
+        { name: "UCI Datasets" },
+        { name: "Logistic Regression" },
+        { name: "Random Forest" },
+        { name: "Decision Tree" },
+        { name: "XAI" },
+        { name: "SHAP" },
+        { name: "Grad-CAM" },
+      ],
+      category: "AI/ML",
     },
     {
       title: "Breast Cancer Classification using Deep Learning (BreakHis Dataset)",
@@ -410,16 +505,17 @@ export default function Portfolio() {
     gsap.utils.toArray<HTMLElement>(".gsap-card").forEach((card) => {
       gsap.fromTo(
         card,
-        { opacity: 0, y: 60 },
+        { opacity: 0, y: 40 },
         {
           opacity: 1,
           y: 0,
-          duration: 1,
-          ease: "power3.out",
+          duration: 0.7,
+          ease: "power2.out",
           scrollTrigger: {
             trigger: card,
-            start: "top 80%",
-            toggleActions: "play reverse play reverse",
+            start: "top 85%",
+            end: "bottom 10%",
+            toggleActions: "play none none none",
           },
         }
       );
@@ -468,70 +564,49 @@ export default function Portfolio() {
         </nav>
       </FadeContent>
 
-      <div id="home" className="flex relative">
-        {/* New Social Media Sidebar - only in hero section, not fixed */}
-        <div className="absolute inset-0 flex items-center justify-center z-20">
-        <div className="relative flex flex-col items-center justify-center space-y-6 px-7 py-8">           
-           {/* Social Media Icons */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center space-y-6 px-11 -mt-12 ml-4">
-              {socialLinks.map((social) => {
-                const IconComponent = social.icon;
-                return (
-                  <motion.a
-                    key={social.id}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={social.name}
-                    whileHover={{ scale: 1.2, transition: { duration: 0.2 } }}
-                    whileTap={{ scale: 0.9 }}
-                    className="relative w-12 h-12 rounded-full flex items-center justify-center"
-                  >
-                    {social.id === "behance" ? (
-                      <span className="text-base font-bold" style={{ color: social.color }}>
-                        Be
-                      </span>
-                    ) : IconComponent ? (
-                      <IconComponent size={22} style={{ color: social.color }} />
-                    ) : null}
-                  </motion.a>
-                );
-              })}
-            </div>
-          </div>
+      <div id="home" className="flex relative" style={{ overflow: 'hidden' }}>
+        <NeuralBackground />
+        {/* Social Media Sidebar — fixed to left edge, vertically centred */}
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center gap-5">
+          {socialLinks.map((social) => {
+            const IconComponent = social.icon;
+            return (
+              <motion.a
+                key={social.id}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.name}
+                whileHover={{ scale: 1.2, transition: { duration: 0.2 } }}
+                whileTap={{ scale: 0.9 }}
+                className="w-10 h-10 rounded-full flex items-center justify-center"
+              >
+                {social.id === "behance" ? (
+                  <span className="text-base font-bold" style={{ color: social.color }}>Be</span>
+                ) : IconComponent ? (
+                  <IconComponent size={22} style={{ color: social.color }} />
+                ) : null}
+              </motion.a>
+            );
+          })}
         </div>
         {/* End Social Media Sidebar */}
 
         {/* Main Content - Centered Container */}
         <div className="w-full min-h-[calc(100vh-80px)] flex items-center justify-center relative">
-          {/* Arrow Pointer - positioned with tail next to H in Hello */}
-          <div className="absolute left-1/2 top-1/2 transform -translate-x-40 -translate-y-28 z-20">
-            <div className="relative">
-              {/* Glowing background layer */}
-              <div className="absolute inset-0 pulsing-glow">
-                <Image
-                  src="/arrow-pointer.png"
-                  alt="Arrow Glow"
-                  width={100}
-                  height={100}
-                  className="object-contain opacity-40 blur-sm"
-                />
-              </div>
-              {/* Main arrow with color effects */}
-              <Image
-                src="/arrow-pointer.png"
-                alt="Arrow Pointer"
-                width={100}
-                height={100}
-                className="object-contain relative z-10 arrow-effects"
-              />
-            </div>
-          </div>
-
           {/* Centered Bitmoji and Text */}
           <div className="flex flex-row items-center justify-center max-w-2xl mx-auto space-x-16">
             {/* Bitmoji */}
             <div className="relative flex items-center justify-center w-64 h-64">
+              {/* Arrow on the left side of the gradient circle */}
+              <div className="absolute z-20" style={{ right: '-45px', top: '30%', transform: 'translateY(-50%)' }}>
+                <div className="relative">
+                  <div className="absolute inset-0 pulsing-glow">
+                    <Image src="/arrow-pointer.png" alt="Arrow Glow" width={100} height={100} className="object-contain opacity-40 blur-sm" />
+                  </div>
+                  <Image src="/arrow-pointer.png" alt="Arrow Pointer" width={100} height={100} className="object-contain relative z-10 arrow-effects" />
+                </div>
+              </div>
               {/* Large glowing gradient absolutely centered */}
               <div
                 className="pointer-events-none select-none"
@@ -585,48 +660,81 @@ export default function Portfolio() {
               </div>
             </div>
             {/* Text */}
-            <div className="space-y-6 max-w-md relative flex flex-col items-start ml-4">
+            <div className="space-y-6 relative flex flex-col items-start ml-4">
               <div className="space-y-2 flex flex-col items-start">
                 <p
-                  className="text-white text-left"
-                  style={{ fontFamily: "Jua, sans-serif", fontSize: "24px", fontWeight: "normal" }}
+                  className="text-white text-left whitespace-nowrap"
+                  style={{ fontFamily: "Jua, sans-serif", fontSize: "30px", fontWeight: "normal" }}
                 >
-                  Hello! I am <span style={{ color: "#7127BA" }}>Sneha Venkatesh</span>
+                  <span style={{ color: "#7127BA" }}>Hello! I am </span><span style={{ color: "#ffffff" }}>Sneha Venkatesh</span>
                 </p>
 
-                {/* Developer. Designer. with BlurText animation - forced on same line */}
-                <div className="text-white leading-tight whitespace-nowrap text-left" style={{ fontFamily: "Kantumruy, sans-serif", fontSize: "48px", fontWeight: "normal" }}>
-                  <BlurText text="Product Designer." delay={150} animateBy="words" direction="top" loop={true} loopDelay={6000} />
-                </div>
-
-                {/* AI Agent Builder with Oval Vector Background and BlurText animation */}
-                <div className="relative flex flex-col items-start">
-                  <Image src="/oval-vector.png" alt="Oval Vector" width={400} height={100} className="absolute -left-4 -top-12 object-contain opacity-70" />
-                  <div className="relative z-10 leading-tight text-left" style={{ fontFamily: "Kantumruy, sans-serif", fontSize: "48px", fontWeight: "normal" }}>
-                    <BlurText
-                      text="Full-Stack Developer"
-                      delay={200}
-                      animateBy="words"
-                      direction="bottom"
-                      loop={true}
-                      loopDelay={6000}
+                {/* AI/ML Engineer - Main highlighted role */}
+                <div className="relative flex flex-col items-start mt-2" style={{ lineHeight: 1.1 }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/oval-vector.png"
+                    alt="Oval Vector"
+                    style={{ position: 'absolute', left: '-10px', top: '10px', opacity: 0.7, width: '1000px', height: 'auto' }}
+                  />
+                  <div className="relative z-10 flex flex-col items-start">
+                    {/* AI & ML — white */}
+                    <SplitText
+                      text="AI & ML"
+                      tag="span"
+                      splitType="chars"
+                      delay={80}
+                      duration={0.8}
+                      ease="power3.out"
+                      from={{ opacity: 0, y: 50 }}
+                      to={{ opacity: 1, y: 0 }}
+                      threshold={0.2}
+                      rootMargin="0px"
+                      textAlign="left"
+                      className="text-white"
                       style={{
-                        background: "linear-gradient(to right, #763CAC, #320F85)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text",
-                        color: "transparent",
+                        fontFamily: "Kantumruy, sans-serif",
+                        fontSize: "64px",
+                        fontWeight: "normal",
+                        lineHeight: 1.15,
+                        display: "block",
+                      }}
+                    />
+                    {/* Engineer — purple */}
+                    <SplitText
+                      text="Engineer"
+                      tag="span"
+                      splitType="chars"
+                      delay={80}
+                      duration={0.8}
+                      ease="power3.out"
+                      from={{ opacity: 0, y: 50 }}
+                      to={{ opacity: 1, y: 0 }}
+                      threshold={0.2}
+                      rootMargin="0px"
+                      textAlign="left"
+                      style={{
+                        fontFamily: "Kantumruy, sans-serif",
+                        fontSize: "64px",
+                        fontWeight: "normal",
+                        color: "#B18CFE",
+                        lineHeight: 1.15,
+                        display: "block",
                       }}
                     />
                   </div>
                 </div>
+
+                {/* Secondary roles as pill buttons */}
+                <div className="flex gap-3 mt-1">
+                  <span className="text-sm text-white/80 border border-white/30 rounded-full px-4 py-1.5 backdrop-blur-sm">
+                    Full Stack
+                  </span>
+                  <span className="text-sm text-white/80 border border-white/30 rounded-full px-4 py-1.5 backdrop-blur-sm">
+                    Product Designer
+                  </span>
+                </div>
               </div>
-              <p
-                className="text-gray-300 leading-relaxed text-left"
-                style={{ fontFamily: "Jua, sans-serif", fontSize: "24px", fontWeight: "normal" }}
-              >
-                Turning Ideas into smart, beautiful, and functional realities
-              </p>
             </div>
           </div>
         </div>
@@ -674,6 +782,14 @@ export default function Portfolio() {
   <div className="flex justify-center gap-48 mt-8 mb-16">
     <button
       className={`text-lg font-medium transition-all duration-300 uppercase tracking-wider pb-1 ${
+        activeCategory === 'AI/ML' ? 'text-white border-b-2 border-[#7127BA]' : 'text-white/60 hover:text-white'
+      }`}
+      onClick={() => setActiveCategory('AI/ML')}
+    >
+      AI/ML
+    </button>
+    <button
+      className={`text-lg font-medium transition-all duration-300 uppercase tracking-wider pb-1 ${
         activeCategory === 'Full Stack' ? 'text-white border-b-2 border-[#7127BA]' : 'text-white/60 hover:text-white'
       }`}
       onClick={() => setActiveCategory('Full Stack')}
@@ -687,14 +803,6 @@ export default function Portfolio() {
       onClick={() => setActiveCategory('UI/UX')}
     >
       UI/UX
-    </button>
-    <button
-      className={`text-lg font-medium transition-all duration-300 uppercase tracking-wider pb-1 ${
-        activeCategory === 'AI/ML' ? 'text-white border-b-2 border-[#7127BA]' : 'text-white/60 hover:text-white'
-      }`}
-      onClick={() => setActiveCategory('AI/ML')}
-    >
-      AI/ML
     </button>
   </div>
 
@@ -710,10 +818,10 @@ export default function Portfolio() {
           {/* Right: Project Content */}
           <div className="flex flex-col gap-8 md:-mt-2">
             {/* Media (Video/Image) */}
-            <a 
-              href={project.link} 
-              target="_blank" 
-              rel="noopener noreferrer" 
+            <a
+              href={project.link || undefined}
+              target={project.link ? "_blank" : undefined}
+              rel={project.link ? "noopener noreferrer" : undefined}
               className="block rounded-2xl overflow-hidden shadow-2xl border-2 border-transparent hover:border-[#7127BA] transition-all duration-500 ease-in-out transform hover:-translate-y-2 h-[36rem] cursor-none"
               onMouseEnter={() => setCursorVariant("project")}
               onMouseLeave={() => setCursorVariant("default")}
@@ -771,22 +879,16 @@ export default function Portfolio() {
 
 {/* Tech Stack Section */}
 <section id="tech-stack" className="w-full flex flex-col items-center pt-20 pb-0 relative" style={{ backgroundColor: '#11071F' }}>
-  <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center w-full" 
+  <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center w-full"
       style={{ fontFamily: 'Jua, sans-serif', letterSpacing: '0.01em' }}>
         💻 Tech Stack's
   </h2>
-  {/* Push image below heading */}
-  <div className="flex justify-center">
-    <Image
-      src="/Tech.png"
+  <div className="flex justify-center" style={{ background: 'transparent' }}>
+    {/* eslint-disable-next-line @next/next/no-img-element */}
+    <img
+      src="/tech5.jpeg"
       alt="Tech Stack Section"
-      width={1200}
-      height={100}
-      className="object-contain"
-      style={{
-        maxWidth: "90vw",
-        height: "auto",
-      }}
+      style={{ maxWidth: "65vw", height: "auto", background: "transparent", display: "block", border: "1.5px solid rgba(177, 140, 254, 0.4)", borderRadius: "16px", padding: "0" }}
     />
   </div>
 </section>
@@ -817,7 +919,7 @@ export default function Portfolio() {
         {/* CurvedLoop text */}
         <div className="w-full flex items-center justify-center relative z-10" style={{ minHeight: '100px' }}>
           <CurvedLoop
-            marqueeText="AI integration with v0 ✦ Figma ✦ Lovable ✦ Cursor ✦ Node.js ✦ React ✦ AutoGen ✦ Type Script ✦ Java Script ✦ Design Ideology ✦ Agile Methodologies  ✦ AI/ML Fundamentals ✦ User Research ✦ Ui/Ux Principles ✦ Cross Functional Collabration ✦"
+            marqueeText="Large Language Models ✦ RAG Pipelines ✦ PyTorch ✦ TensorFlow ✦ Scikit-learn ✦ HuggingFace ✦ LangChain ✦ Fine-Tuning ✦ Prompt Engineering ✦ Vector Databases ✦ SHAP ✦ Grad-CAM ✦ Transformer Architecture ✦ Model Deployment ✦ Next.js ✦ React ✦ TypeScript ✦ Node.js ✦ REST APIs ✦ Vercel ✦ Git ✦ Python ✦ Deep Learning ✦ Neural Networks ✦ XAI ✦"
             speed={2}
             curveAmount={400}
             direction="left"
@@ -1012,37 +1114,127 @@ export default function Portfolio() {
       </section>
 
       {/* Testimonials Section */}
-      <section id="testimonial" className="w-full flex flex-col items-center py-20 px-2" style={{ backgroundColor: '#11071F' }}>
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-8 text-center w-full" style={{ fontFamily: 'Jua, sans-serif', letterSpacing: '0.01em' }}>
-          💬Testimonials
-        </h2>
-        <div className="w-full flex flex-col items-center">
-          <div className="w-full max-w-xl mx-auto relative">
+      <section id="testimonial" className="w-full flex flex-col items-center py-20 px-4" style={{ backgroundColor: '#11071F' }}>
 
-            {/* Carousel container */}
-            <TestimonialCarousel testimonials={[
-              {
-                quote: "Working with Sneha as a Product Designer was an absolute pleasure. She brought creativity, dedication, and a collaborative spirit to the table, making the whole process seamless and enjoyable. Her attention to detail and problem-solving abilities truly stood out..",
-                author: "Trisha Mani ",
-                role: "Design Duh,Lead",
-                emoji: "💬"
-              },
-              {
-                quote: "Sneha worked with us at Altacee, contributing to the design and development of modern web solutions while demonstrating a strong sense of ownership and creativity. She has a sharp eye for detail, a solid understanding of UI/UX principles, and the ability to translate ideas into practical, user-focused products. Sneha’s proactive approach, adaptability, and leadership potential make her someone who can add real value to any team she works with.",
-                author: "Aditya Kushwaha",
-                role: "Founder of Atlacee",
-                emoji: "💬"
-              },
-              {
-                quote: "Sneha interned with AIKO Technologies in 2025, with the responsibility of designing and revamping current UI-UX on AIKO’s Generative AI Social Networking Apps, and Bulk-Image Generator website."+
-                        "Sneha is a talented, intelligent, and highly motivated individual with a flexible yet strong understanding of organizational requirements. At AIKO, we also had the opportunity to see her qualities of leadership when Sneha undertook UI/UX design responsibility — her voice is strong, and we are confident that leadership is a strong suit of Sneha’s that can be beneficial to any organization that she may be active with.",
-                author: "Soham pal",
-                role: "DIRECTOR of AIKO TECHNOLOGY PVT LTD",
-                emoji: "💬"
-              }
-            ]} />
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-3 text-center w-full" style={{ fontFamily: 'Jua, sans-serif', letterSpacing: '0.01em' }}>
+          💬 Testimonials
+        </h2>
+        <p className="text-white/40 text-sm mb-10 text-center">Worked with me? Leave a note.</p>
+
+        {/* Button */}
+        <motion.button
+          onClick={openAddForm}
+          whileHover={{ scale: 1.04 }}
+          whileTap={{ scale: 0.96 }}
+          className="flex items-center gap-2 px-7 py-3 rounded-full bg-gradient-to-r from-[#7127BA] to-[#B18CFE] text-white text-sm font-semibold shadow-lg hover:opacity-90 transition mb-12"
+        >
+          <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          Leave a Testimonial
+        </motion.button>
+
+        {/* Cards */}
+        {userTestimonials.length === 0 ? (
+          <p className="text-white/20 text-sm italic">No testimonials yet — be the first!</p>
+        ) : (
+          <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <AnimatePresence>
+              {userTestimonials.map((t) => (
+                <motion.div
+                  key={t.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.92 }}
+                  transition={{ duration: 0.28 }}
+                  className="group relative flex flex-col gap-4 bg-[#160d2e] border border-[#7127BA]/25 rounded-2xl p-6 hover:border-[#7127BA]/60 transition-all"
+                >
+                  <span className="text-3xl leading-none">{t.emoji}</span>
+                  <p className="text-white/80 text-sm leading-relaxed flex-1">&ldquo;{t.quote}&rdquo;</p>
+                  <div className="pt-3 border-t border-white/10">
+                    <p className="text-[#B18CFE] text-sm font-semibold">&mdash; {t.author}</p>
+                    {t.role && <p className="text-white/35 text-xs mt-0.5">{t.role}</p>}
+                  </div>
+                  {/* Edit / Delete on hover */}
+                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => openEditForm(t)} title="Edit"
+                      className="w-7 h-7 flex items-center justify-center rounded-full bg-[#7127BA]/30 hover:bg-[#7127BA]/70 transition">
+                      <svg width="12" height="12" fill="none" stroke="#B18CFE" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button onClick={() => deleteUT(t.id)} title="Delete"
+                      className="w-7 h-7 flex items-center justify-center rounded-full bg-red-500/20 hover:bg-red-500/60 transition">
+                      <svg width="12" height="12" fill="none" stroke="#ff7070" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
-        </div>
+        )}
+
+        {/* Centered modal */}
+        <AnimatePresence>
+          {showTForm && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+              style={{ backgroundColor: 'rgba(0,0,0,0.82)', backdropFilter: 'blur(8px)' }}
+              onClick={e => { if (e.target === e.currentTarget) setShowTForm(false); }}
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 30 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+                className="w-full max-w-md bg-[#110828] border border-[#7127BA]/50 rounded-3xl p-7 flex flex-col gap-5 shadow-2xl"
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-white text-lg font-bold" style={{ fontFamily: 'Jua, sans-serif' }}>
+                    {editingTId ? 'Edit Testimonial' : 'Leave a Testimonial'}
+                  </h3>
+                  <button onClick={() => setShowTForm(false)}
+                    className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/15 text-white/50 hover:text-white transition text-sm">
+                    ✕
+                  </button>
+                </div>
+                <div className="flex gap-2">
+                  {['💬','⭐','🚀','🔥','💡','🎯','🤝','🌟'].map(em => (
+                    <button key={em} onClick={() => setTForm(f => ({ ...f, emoji: em }))}
+                      className={`text-lg p-1.5 rounded-lg transition-all ${tForm.emoji === em ? 'bg-[#7127BA]/60 scale-110 ring-1 ring-[#B18CFE]/50' : 'hover:bg-white/10'}`}>
+                      {em}
+                    </button>
+                  ))}
+                </div>
+                <textarea
+                  value={tForm.quote}
+                  onChange={e => setTForm(f => ({ ...f, quote: e.target.value }))}
+                  placeholder="Share your experience working with Sneha..."
+                  rows={4}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 resize-none focus:outline-none focus:border-[#7127BA] transition"
+                />
+                <input value={tForm.author} onChange={e => setTForm(f => ({ ...f, author: e.target.value }))}
+                  placeholder="Your name *"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#7127BA] transition"
+                />
+                <input value={tForm.role} onChange={e => setTForm(f => ({ ...f, role: e.target.value }))}
+                  placeholder="Your role / company (optional)"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#7127BA] transition"
+                />
+                <div className="flex gap-3">
+                  <button onClick={() => setShowTForm(false)}
+                    className="flex-1 py-2.5 rounded-xl border border-white/10 text-white/40 text-sm hover:bg-white/5 transition">
+                    Cancel
+                  </button>
+                  <button onClick={submitTForm} disabled={!tForm.quote.trim() || !tForm.author.trim()}
+                    className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#7127BA] to-[#B18CFE] text-white text-sm font-semibold hover:opacity-90 transition disabled:opacity-35 disabled:cursor-not-allowed">
+                    {editingTId ? 'Save Changes' : 'Submit'}
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
       </section>
 
       {/* Side-by-Side Contact & Vertical Resume Section */}
@@ -1052,7 +1244,7 @@ export default function Portfolio() {
         🤝 Let's Connect
         </h2>
         <p className="text-lg md:text-xl text-white/80 text-center mb-8 max-w-2xl" style={{ fontFamily: 'inherit' }}>
-          If you’d like to work together or have a project in mind, I’d love to hear from you!
+          If you'd like to work together or have a project in mind, I'd love to hear from you!
         </p>
         <div className="max-w-5xl w-full flex flex-col md:flex-row items-end bg-transparent rounded-2xl shadow-none">
          {/* Right: Open For Section */}
@@ -1084,7 +1276,7 @@ export default function Portfolio() {
           </svg>
         </span>
                   </div>
-                  <a href="./Product_design_dev_sneha.pdf" download className="px-6 py-3 rounded-full bg-[#763CAC] text-white font-bold shadow-lg hover:bg-white hover:text-[#763CAC] transition flex items-center gap-2 mt-4 self-center">
+                  <a href="./sneha_resume_ml.pdf" download className="px-6 py-3 rounded-full bg-[#763CAC] text-white font-bold shadow-lg hover:bg-white hover:text-[#763CAC] transition flex items-center gap-2 mt-4 self-center">
                     <span className="text-xl">Resume</span>
                   </a>
                 </div> 

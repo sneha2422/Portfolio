@@ -11,10 +11,6 @@
 .text-pressure-title {
   color: #ffffff;
 }
-.flex {
-  display: flex;
-  justify-content: space-between;
-}
 .stroke span {
   position: relative;
   color: #ffffff;
