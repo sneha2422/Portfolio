@@ -475,10 +475,11 @@ export default function Portfolio() {
   // Navigation items
   const navItems = [
     { label: "Home", href: "#home" },
-    { label: "Experience", href: "#experience" },
+    { label: "Skills", href: "#skills" },
     { label: "Projects", href: "#projects" },
     { label: "Tech Stacks", href: "#tech-stack" },
     { label: "About", href: "#about" },
+    { label: "Experience", href: "#experience" },
     { label: "Highlights", href: "#highlights" },
     { label: "Testimonial", href: "#testimonial" },
     { label: "Contact", href: "#contact" },
@@ -911,6 +912,7 @@ export default function Portfolio() {
 
 {/* MagicBento Section */}
 <section
+  id="skills"
   className="w-full flex flex-col items-center justify-center py-20  mx-auto px-4"
   style={{ backgroundColor: '#11071F' }}
 >
