@@ -87,6 +87,131 @@ function TestimonialCarousel({ testimonials }: { testimonials: { quote: string, 
   );
 }
 
+// Work Experience — fanned card stack data
+const AIML_BADGE = { badgeBg: "rgba(139,92,246,0.15)", badgeColor: "#a78bfa", badgeBorder: "0.5px solid rgba(139,92,246,0.3)" };
+const DESIGN_BADGE = { badgeBg: "rgba(167,139,250,0.1)", badgeColor: "#c4b5fd", badgeBorder: "0.5px solid rgba(167,139,250,0.25)" };
+const DEV_BADGE = { badgeBg: "rgba(96,165,250,0.13)", badgeColor: "#60a5fa", badgeBorder: "0.5px solid rgba(96,165,250,0.3)" };
+
+const fanExperience = [
+  {
+    company: "Revoltution Labs",
+    date: "May 2026 – Present",
+    badge: "AI/ML",
+    ...AIML_BADGE,
+    role: "AI & ML Intern",
+    roleColor: "#a78bfa",
+    location: "Bangalore · On-site",
+    bullets: [
+      "Building an AI voice assistant pipeline integrating speech recognition, NLP, and LLM-based response generation.",
+      "Applying ML techniques and prompt engineering to optimize voice agent accuracy and response quality.",
+    ],
+    rotate: -10,
+    tx: 50,
+  },
+  {
+    company: "KJ Systems LTD",
+    date: "Apr 2026 – Present",
+    badge: "AI/ML",
+    ...AIML_BADGE,
+    role: "Developer (AI/ML Focus)",
+    roleColor: "#a78bfa",
+    location: "United Kingdom · Remote",
+    bullets: [
+      "Built production-ready AI expense scanner using Azure Document Intelligence and OCR.",
+      "Developed VAT reconciliation logic and automated Excel report generation reducing manual effort significantly.",
+    ],
+    rotate: -6,
+    tx: 30,
+  },
+  {
+    company: "SiteSathi",
+    date: "Jan 2026 – Present",
+    badge: "Design",
+    ...DESIGN_BADGE,
+    role: "Product Designer",
+    roleColor: "#c4b5fd",
+    location: "India · Remote",
+    bullets: [
+      "Leading end-to-end product design for a construction-tech platform from research to Figma prototypes.",
+      "Translating complex construction workflows into intuitive digital experiences for non-technical users.",
+    ],
+    rotate: -2,
+    tx: 10,
+  },
+  {
+    company: "SilicoScientia",
+    date: "Mar 2025 – Jul 2025",
+    badge: "Dev",
+    ...DEV_BADGE,
+    role: "Product Developer",
+    roleColor: "#93c5fd",
+    location: "Bangalore · Remote",
+    bullets: [
+      "Improved platform usability by 60% and reduced analysis workflow time by 40%.",
+      "Developed data-driven dashboards for computational drug discovery tools used by research institutions.",
+    ],
+    rotate: 2,
+    tx: -10,
+  },
+  {
+    company: "BillianceAI",
+    date: "Dec 2025 – Jan 2026",
+    badge: "AI/ML",
+    ...AIML_BADGE,
+    role: "Research Assistant",
+    roleColor: "#a78bfa",
+    location: "Chennai · Remote",
+    bullets: [
+      "Contributed to building Felina — an AI voice agent that understands context, explains products, and persuades callers like a skilled human would.",
+      "Worked on conversational AI systems supporting 16 languages, natural pauses, accented voices, and real-time adaptive responses.",
+    ],
+    rotate: 6,
+    tx: -30,
+  },
+  {
+    company: "AIKO",
+    date: "Apr 2024 – Mar 2025",
+    badge: "Design",
+    ...DESIGN_BADGE,
+    role: "Product Designer",
+    roleColor: "#c4b5fd",
+    location: "New Jersey · Remote",
+    bullets: [
+      "Boosted user engagement by 45% designing an AI-powered cross-platform app with Generative AI.",
+      "Led data-informed design iterations translating user behaviour insights into product improvements.",
+    ],
+    rotate: 10,
+    tx: -50,
+  },
+];
+
+// Shared inner content for a fan card
+function ExpCardInner({ exp }: { exp: (typeof fanExperience)[number] }) {
+  return (
+    <>
+      <div className="flex items-start justify-between gap-2">
+        <h3 className="text-white font-bold leading-tight" style={{ fontFamily: "Jua, sans-serif", fontSize: "18px" }}>{exp.company}</h3>
+        <span className="text-white/40 text-[11px] whitespace-nowrap mt-1 flex-shrink-0">{exp.date}</span>
+      </div>
+      <span
+        className="inline-block w-fit text-xs font-semibold px-2.5 py-1 rounded-full mt-3"
+        style={{ backgroundColor: exp.badgeBg, color: exp.badgeColor, border: exp.badgeBorder }}
+      >
+        {exp.badge}
+      </span>
+      <p className="text-base font-bold mt-3" style={{ color: exp.roleColor }}>{exp.role}</p>
+      <p className="text-white/40 mt-1" style={{ fontSize: "11px" }}>{exp.location}</p>
+      <ul className="flex flex-col gap-1 mt-2">
+        {exp.bullets.map((b, bi) => (
+          <li key={bi} style={{ fontSize: "14px", color: "rgba(255,255,255,0.7)", lineHeight: 1.6 }}>
+            • {b}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
 export default function Portfolio() {
   const [rotateX, setRotateX] = useState(0)
   const [rotateY, setRotateY] = useState(0)
@@ -98,6 +223,8 @@ export default function Portfolio() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const videoRef = useRef<HTMLVideoElement>(null);
   const [activeCategory, setActiveCategory] = useState('AI/ML');
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [hoveredExp, setHoveredExp] = useState<number | null>(null);
 
   // ── User Testimonials ──────────────────────────────────────────────
   interface UserTestimonial { id: string; quote: string; author: string; role: string; emoji: string; }
@@ -348,6 +475,7 @@ export default function Portfolio() {
   // Navigation items
   const navItems = [
     { label: "Home", href: "#home" },
+    { label: "Experience", href: "#experience" },
     { label: "Projects", href: "#projects" },
     { label: "Tech Stacks", href: "#tech-stack" },
     { label: "About", href: "#about" },
@@ -542,25 +670,66 @@ export default function Portfolio() {
             </GlareHover>
           </div>
 
-          {/* Gooey Navigation Container - Single animation per session */}
-          {!navAnimated ? (
-            <AnimatedContent
-              distance={150}
-              direction="horizontal"
-              reverse={false}
-              duration={1}
-              ease="bounce.out"
-              initialOpacity={0.2}
-              animateOpacity
-              scale={1.1}
-              threshold={0.1}
-              delay={0.3}
+          {/* Gooey Navigation Container - Desktop only */}
+          <div className="hidden md:block">
+            {!navAnimated ? (
+              <AnimatedContent
+                distance={150}
+                direction="horizontal"
+                reverse={false}
+                duration={1}
+                ease="bounce.out"
+                initialOpacity={0.2}
+                animateOpacity
+                scale={1.1}
+                threshold={0.1}
+                delay={0.3}
+              >
+                {gooeyNav}
+              </AnimatedContent>
+            ) : (
+              gooeyNav
+            )}
+          </div>
+
+          {/* Hamburger - Mobile only */}
+          <div className="md:hidden relative z-40">
+            <button
+              aria-label="Toggle menu"
+              onClick={(e) => { e.stopPropagation(); setMobileNavOpen((o) => !o); }}
+              className="w-11 h-11 flex items-center justify-center rounded-lg text-white hover:bg-white/10 transition"
             >
-              {gooeyNav}
-            </AnimatedContent>
-          ) : (
-            gooeyNav
-          )}
+              <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24">
+                {mobileNavOpen ? (
+                  <path d="M6 6l12 12M18 6L6 18" />
+                ) : (
+                  <path d="M4 7h16M4 12h16M4 17h16" />
+                )}
+              </svg>
+            </button>
+            <AnimatePresence>
+              {mobileNavOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute right-0 mt-2 w-48 rounded-2xl border border-[#7127BA]/40 bg-[#160d2e] shadow-2xl overflow-hidden"
+                  onClick={() => setMobileNavOpen(false)}
+                >
+                  {navItems.map((item) => (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      className="block px-5 py-3 text-white/80 text-sm hover:bg-[#7127BA]/30 hover:text-white transition"
+                    >
+                      {item.label}
+                    </a>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </nav>
       </FadeContent>
 
@@ -595,9 +764,9 @@ export default function Portfolio() {
         {/* Main Content - Centered Container */}
         <div className="w-full min-h-[calc(100vh-80px)] flex items-center justify-center relative">
           {/* Centered Bitmoji and Text */}
-          <div className="flex flex-row items-center justify-center max-w-2xl mx-auto space-x-16">
+          <div className="flex flex-col md:flex-row items-center justify-center max-w-2xl mx-auto space-y-10 md:space-y-0 md:space-x-16">
             {/* Bitmoji */}
-            <div className="relative flex items-center justify-center w-64 h-64">
+            <div className="relative flex items-center justify-center w-44 h-44 md:w-64 md:h-64">
               {/* Arrow on the left side of the gradient circle */}
               <div className="absolute z-20" style={{ right: '-45px', top: '30%', transform: 'translateY(-50%)' }}>
                 <div className="relative">
@@ -629,7 +798,7 @@ export default function Portfolio() {
                 />
               </div>
               <div
-                className="relative z-10 flex items-center justify-center w-60 h-60 cursor-grab active:cursor-grabbing"
+                className="relative z-10 flex items-center justify-center w-40 h-40 md:w-60 md:h-60 cursor-grab active:cursor-grabbing"
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
                 style={{ perspective: "1000px" }}
@@ -660,11 +829,11 @@ export default function Portfolio() {
               </div>
             </div>
             {/* Text */}
-            <div className="space-y-6 relative flex flex-col items-start ml-4">
-              <div className="space-y-2 flex flex-col items-start">
+            <div className="space-y-6 relative flex flex-col items-center text-center md:items-start md:text-left md:ml-4">
+              <div className="space-y-2 flex flex-col items-center md:items-start">
                 <p
-                  className="text-white text-left whitespace-nowrap"
-                  style={{ fontFamily: "Jua, sans-serif", fontSize: "30px", fontWeight: "normal" }}
+                  className="text-white whitespace-normal md:whitespace-nowrap"
+                  style={{ fontFamily: "Jua, sans-serif", fontSize: "clamp(18px, 5.5vw, 30px)", fontWeight: "normal" }}
                 >
                   <span style={{ color: "#7127BA" }}>Hello! I am </span><span style={{ color: "#ffffff" }}>Sneha Venkatesh</span>
                 </p>
@@ -675,7 +844,7 @@ export default function Portfolio() {
                   <img
                     src="/oval-vector.png"
                     alt="Oval Vector"
-                    style={{ position: 'absolute', left: '-10px', top: '10px', opacity: 0.7, width: '1000px', height: 'auto' }}
+                    style={{ position: 'absolute', left: '-10px', top: '10px', opacity: 0.7, width: 'min(1000px, 170vw)', height: 'auto' }}
                   />
                   <div className="relative z-10 flex flex-col items-start">
                     {/* AI & ML — white */}
@@ -694,7 +863,7 @@ export default function Portfolio() {
                       className="text-white"
                       style={{
                         fontFamily: "Kantumruy, sans-serif",
-                        fontSize: "64px",
+                        fontSize: "clamp(38px, 11vw, 64px)",
                         fontWeight: "normal",
                         lineHeight: 1.15,
                         display: "block",
@@ -715,7 +884,7 @@ export default function Portfolio() {
                       textAlign="left"
                       style={{
                         fontFamily: "Kantumruy, sans-serif",
-                        fontSize: "64px",
+                        fontSize: "clamp(38px, 11vw, 64px)",
                         fontWeight: "normal",
                         color: "#B18CFE",
                         lineHeight: 1.15,
@@ -770,6 +939,77 @@ export default function Portfolio() {
 </section>
 
 
+{/* Work Experience Section — fanned card stack */}
+<section id="experience" className="w-full flex flex-col items-center py-20 px-4" style={{ backgroundColor: '#11071F' }}>
+  <h2 className="text-3xl md:text-4xl font-bold text-white text-center w-full" style={{ fontFamily: 'Jua, sans-serif', letterSpacing: '0.01em' }}>
+    💼 Work Experience
+  </h2>
+  <span className="text-white/40 text-sm mt-2 mb-4 text-center">Where I've worked</span>
+
+  {/* Desktop: fanned card stack */}
+  <div className="hidden md:flex relative w-full mx-auto h-[480px] justify-center items-center overflow-x-clip">
+    {fanExperience.map((exp, index) => {
+      const isHovered = hoveredExp === index;
+      const dimmed = hoveredExp !== null && !isHovered;
+      return (
+        <motion.div
+          key={index}
+          onMouseEnter={() => setHoveredExp(index)}
+          onMouseLeave={() => setHoveredExp(null)}
+          initial={{ opacity: 0, x: exp.tx, rotate: exp.rotate }}
+          animate={{
+            opacity: dimmed ? 0.7 : 1,
+            x: exp.tx,
+            y: isHovered ? -20 : 0,
+            rotate: isHovered ? 0 : exp.rotate,
+            scale: isHovered ? 1.05 : 1,
+          }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          className="flex-shrink-0 flex flex-col p-5 cursor-pointer"
+          style={{
+            width: 320,
+            minHeight: 340,
+            height: 'auto',
+            marginLeft: index === 0 ? 0 : -95,
+            transformOrigin: 'bottom center',
+            zIndex: isHovered ? 50 : index,
+            backgroundColor: '#1a0d30',
+            border: '0.5px solid rgba(255,255,255,0.08)',
+            borderRadius: 16,
+            boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+          }}
+        >
+          <ExpCardInner exp={exp} />
+        </motion.div>
+      );
+    })}
+  </div>
+
+  {/* Mobile: stacked single column, no rotation */}
+  <div className="flex md:hidden flex-col gap-5 w-full max-w-sm mx-auto mt-4">
+    {fanExperience.map((exp, index) => (
+      <motion.div
+        key={index}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.4, delay: index * 0.08, ease: 'easeOut' }}
+        className="w-full flex flex-col p-5"
+        style={{
+          minHeight: 280,
+          backgroundColor: '#1a0d30',
+          border: '0.5px solid rgba(255,255,255,0.08)',
+          borderRadius: 16,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+        }}
+      >
+        <ExpCardInner exp={exp} />
+      </motion.div>
+    ))}
+  </div>
+</section>
+
+
 {/* Projects Section */}
 <section id="projects" className="w-full flex flex-col items-center py-20 px-4" style={{ backgroundColor: '#11071F' }}>
   <div className="text-center mb-4">
@@ -811,7 +1051,7 @@ export default function Portfolio() {
       <React.Fragment key={index}>
         <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] items-start gap-x-12 gap-y-6">
           {/* Left: Project Number */}
-          <div className="text-8xl font-black text-white/10 -mt-2" style={{ fontFamily: 'Jua, sans-serif' }}>
+          <div className="text-6xl md:text-8xl font-black text-white/10 -mt-2" style={{ fontFamily: 'Jua, sans-serif' }}>
             0{index + 1}
           </div>
 
@@ -822,7 +1062,7 @@ export default function Portfolio() {
               href={project.link || undefined}
               target={project.link ? "_blank" : undefined}
               rel={project.link ? "noopener noreferrer" : undefined}
-              className="block rounded-2xl overflow-hidden shadow-2xl border-2 border-transparent hover:border-[#7127BA] transition-all duration-500 ease-in-out transform hover:-translate-y-2 h-[36rem] cursor-none"
+              className="block rounded-2xl overflow-hidden shadow-2xl border-2 border-transparent hover:border-[#7127BA] transition-all duration-500 ease-in-out transform hover:-translate-y-2 h-[20rem] md:h-[36rem] cursor-none"
               onMouseEnter={() => setCursorVariant("project")}
               onMouseLeave={() => setCursorVariant("default")}
             >
@@ -888,7 +1128,8 @@ export default function Portfolio() {
     <img
       src="/tech5.jpeg"
       alt="Tech Stack Section"
-      style={{ maxWidth: "65vw", height: "auto", background: "transparent", display: "block", border: "1.5px solid rgba(177, 140, 254, 0.4)", borderRadius: "16px", padding: "0" }}
+      className="max-w-[85vw] md:max-w-[65vw]"
+      style={{ height: "auto", background: "transparent", display: "block", border: "1.5px solid rgba(177, 140, 254, 0.4)", borderRadius: "16px", padding: "0" }}
     />
   </div>
 </section>
@@ -936,7 +1177,7 @@ export default function Portfolio() {
         </h2>
         <div className="container mx-auto max-w-7xl w-full flex flex-col md:flex-row items-center md:items-stretch gap-7 justify-center">
           {/* Left: About Text */}
-          <div className="flex flex-col justify-center items-center w-full md:w-1/2 h-[550px]">
+          <div className="flex flex-col justify-center items-center w-full md:w-1/2 h-auto py-8 md:py-0 md:h-[550px]">
             <StarBorder color="#40305A" speed="3s" thickness={1.5} className="w-full max-w-xl py-4">
               <DecryptedText
                 text="I build AI/ML systems end-to-end — from raw data and model architecture all the way to deployment to the user's screen."
@@ -952,7 +1193,7 @@ export default function Portfolio() {
             </StarBorder>
           </div>
           {/* Right: Profile Card */}
-          <div className="flex justify-center md:justify-start items-center w-full md:w-1/3 md:-ml-8 h-[550px]">
+          <div className="flex justify-center md:justify-start items-center w-full md:w-1/3 md:-ml-8 h-auto md:h-[550px]">
             <ProfileCard
               name="Sneha Venkatesh"
               title="AI/ML Engineer. Full-Stack Developer"
@@ -977,20 +1218,21 @@ export default function Portfolio() {
         🌟 Highlights & What Drives Me
         </h2>
         {/* Centered Zig-Zag Timeline with GlareHover Emojis on Line and StarBorder Cards */}
-        <div className="relative flex flex-col items-center w-full max-w-3xl mx-auto" style={{minHeight: '700px'}}>
+        <div className="relative flex flex-col items-center w-full max-w-3xl mx-auto min-h-0 md:min-h-[700px]">
           {/* Vertical line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-[#B18CFE] via-[#7127BA] to-[#763CAC] opacity-70 rounded-full -translate-x-1/2 z-0" style={{ minHeight: '100%' }} />
+          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-[#B18CFE] via-[#7127BA] to-[#763CAC] opacity-70 rounded-full -translate-x-1/2 z-0" style={{ minHeight: '100%' }} />
 
           {/* 1. SIH Hackathon (Left) */}
-          <div className="flex w-full justify-start mb-16 relative z-10 items-center">
-            <div className="relative flex flex-col items-end w-1/2 pr-8 justify-center">
-              <StarBorder color="#763CAC" speed="3s" thickness={1.5} className="w-full max-w-xs gsap-card">
+          <div className="flex w-full justify-start mb-8 md:mb-16 relative z-10 items-center">
+            <div className="relative flex flex-col items-center md:items-end w-full md:w-1/2 px-2 md:pr-8 justify-center">
+              <StarBorder color="#763CAC" speed="3s" thickness={1.5} className="w-full max-w-full md:max-w-xs gsap-card">
                 <div className="flex flex-col gap-2 pb-2">
                   <span className="text-white font-semibold text-lg mb-1">Top 7 Finalist – SIH Round 1</span>
                   <p className="text-[#B6B8D6] text-sm">Selected from 540+ teams for building an AI-powered solution with clean UX & strong backend.</p>
     </div>
               </StarBorder>
               {/* Emoji marker absolutely centered to card */}
+              <div className="hidden md:block">
               <GlareHover
                 width="48px"
                 height="48px"
@@ -1007,20 +1249,22 @@ export default function Portfolio() {
               >
                 <span className="text-2xl">🏆</span>
               </GlareHover>
+              </div>
             </div>
-            <div className="w-1/2" />
+            <div className="hidden md:block md:w-1/2" />
           </div>
           {/* 2. android club (Right) */}
-          <div className="flex w-full justify-end mb-16 relative z-10 items-center">
-            <div className="w-1/2" />
-            <div className="relative flex flex-col items-start w-1/2 pl-8 justify-center">
-              <StarBorder color="#763CAC" speed="3s" thickness={1.5} className="w-full max-w-xs gsap-card">
+          <div className="flex w-full justify-end mb-8 md:mb-16 relative z-10 items-center">
+            <div className="hidden md:block md:w-1/2" />
+            <div className="relative flex flex-col items-center md:items-start w-full md:w-1/2 px-2 md:pl-8 justify-center">
+              <StarBorder color="#763CAC" speed="3s" thickness={1.5} className="w-full max-w-full md:max-w-xs gsap-card">
                 <div className="flex flex-col gap-2 pb-2">
                   <span className="text-white font-semibold text-lg mb-1">Android Club</span>
                   <p className="text-[#B6B8D6] text-sm">Conducted and managed "Hack-n-Droid," a record-breaking university event with 267 teams (including 73 external teams
                     handled event management and served as part of the design team.</p>
                 </div>
               </StarBorder>
+              <div className="hidden md:block">
               <GlareHover
                 width="48px"
                 height="48px"
@@ -1037,17 +1281,19 @@ export default function Portfolio() {
               >
                 <span className="text-2xl">🤖</span>
               </GlareHover>
+              </div>
             </div>
           </div>
           {/* 3. CyberTeam Lead (Left) */}
-          <div className="flex w-full justify-start mb-16 relative z-10 items-center">
-            <div className="relative flex flex-col items-end w-1/2 pr-8 justify-center">
-              <StarBorder color="#763CAC" speed="3s" thickness={1.5} className="w-full max-w-xs gsap-card">
+          <div className="flex w-full justify-start mb-8 md:mb-16 relative z-10 items-center">
+            <div className="relative flex flex-col items-center md:items-end w-full md:w-1/2 px-2 md:pr-8 justify-center">
+              <StarBorder color="#763CAC" speed="3s" thickness={1.5} className="w-full max-w-full md:max-w-xs gsap-card">
                 <div className="flex flex-col gap-2 pb-2">
                   <span className="text-white font-semibold text-lg mb-1">Merchandise Volunteer, VIT Vibrance 2025</span>
                   <p className="text-[#B6B8D6] text-sm">Managed merchandise logistics and contributed to the successful execution of VIT's largest annual festival.</p>
                 </div>
               </StarBorder>
+              <div className="hidden md:block">
               <GlareHover
                 width="48px"
                 height="48px"
@@ -1064,19 +1310,21 @@ export default function Portfolio() {
               >
                 <span className="text-2xl">🎨</span>
               </GlareHover>
+              </div>
             </div>
-            <div className="w-1/2" />
+            <div className="hidden md:block md:w-1/2" />
           </div>
           {/* 4. NGO Volunteer (Right) */}
           <div className="flex w-full justify-end mb-0 relative z-10 items-center">
-            <div className="w-1/2" />
-            <div className="relative flex flex-col items-start w-1/2 pl-8 justify-center">
-              <StarBorder color="#763CAC" speed="3s" thickness={1.5} className="w-full max-w-xs gsap-card">
+            <div className="hidden md:block md:w-1/2" />
+            <div className="relative flex flex-col items-center md:items-start w-full md:w-1/2 px-2 md:pl-8 justify-center">
+              <StarBorder color="#763CAC" speed="3s" thickness={1.5} className="w-full max-w-full md:max-w-xs gsap-card">
                 <div className="flex flex-col gap-2 pb-2">
                   <span className="text-white font-semibold text-lg mb-1">Professional Event Host & Master of Ceremonies</span>
                   <p className="text-[#B6B8D6] text-sm">Building on a passion for the stage since childhood, I have successfully hosted numerous high-profile events and earned media recognition in multiple languages for my public speaking expertise..</p>
                 </div>
               </StarBorder>
+              <div className="hidden md:block">
               <GlareHover
                 width="48px"
                 height="48px"
@@ -1093,6 +1341,7 @@ export default function Portfolio() {
               >
                 <span className="text-2xl">🎤</span>
               </GlareHover>
+              </div>
             </div>
           </div>
         </div>
