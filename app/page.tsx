@@ -29,63 +29,37 @@ import { useRef } from "react";
 import SplitText from "../components/SplitText";
 import NeuralBackground from "../components/NeuralBackground";
 
+import { db } from "../lib/firebase"
+import { collection, addDoc, getDocs, query, where, serverTimestamp } from "firebase/firestore"
+
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
 
-// TestimonialCarousel component for animated testimonial carousel
-function TestimonialCarousel({ testimonials }: { testimonials: { quote: string, author: string, role: string, emoji: string }[] }) {
-  const [current, setCurrent] = useState(0);
-  const next = () => setCurrent((prev) => (prev + 1) % testimonials.length);
-  const prev = () => setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  useEffect(() => {
-    const timer = setTimeout(next, 4000);
-    return () => clearTimeout(timer);
-  }, [current, testimonials.length]);
-  return (
-    <div className="relative w-full flex flex-col items-center">
-      <div className="w-full flex justify-center items-center">
-        <button
-          aria-label="Previous testimonial"
-          onClick={prev}
-          className="p-2 rounded-full bg-[#181028] hover:bg-[#7127BA] transition-colors text-white mr-2 shadow-md"
-        >
-          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" /></svg>
-        </button>
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={current}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
-            className="bg-[#181028] rounded-2xl shadow-xl border border-white/10 px-8 py-8 max-w-md w-full text-center flex flex-col items-center gap-3"
-            style={{ minHeight: 150 }}
-          >
-            <span className="text-3xl mb-2">{testimonials[current].emoji}</span>
-            <p className="text-white text-lg font-medium mb-2">“{testimonials[current].quote}”</p>
-            <span className="text-[#B6B8D6] text-sm font-semibold">— {testimonials[current].author}{testimonials[current].role ? `, ${testimonials[current].role}` : ''}</span>
-          </motion.div>
-        </AnimatePresence>
-        <button
-          aria-label="Next testimonial"
-          onClick={next}
-          className="p-2 rounded-full bg-[#181028] hover:bg-[#7127BA] transition-colors text-white ml-2 shadow-md"
-        >
-          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" /></svg>
-        </button>
-      </div>
-      <div className="flex gap-2 mt-4 justify-center">
-        {testimonials.map((_, idx) => (
-          <button
-            key={idx}
-            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${idx === current ? 'bg-gradient-to-r from-[#7127BA] to-[#B18CFE] shadow-lg' : 'bg-[#40305A]'}`}
-            onClick={() => setCurrent(idx)}
-            aria-label={`Go to testimonial ${idx + 1}`}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
+interface Testimonial { id: string; quote: string; author: string; role: string; emoji: string; }
+
+// Always-on testimonials shown at the top of the grid
+const HARDCODED_TESTIMONIALS: Testimonial[] = [
+  {
+    id: "hc-1",
+    quote: "Working with Sneha as a Product Designer was an absolute pleasure. She brought creativity, dedication, and a collaborative spirit to the table, making the whole process seamless and enjoyable. Her attention to detail and problem-solving abilities truly stood out.",
+    author: "Trisha Mani",
+    role: "Design Duh, Lead",
+    emoji: "💬",
+  },
+  {
+    id: "hc-2",
+    quote: "Sneha worked with us at Altacee, contributing to the design and development of modern web solutions while demonstrating a strong sense of ownership and creativity. She has a sharp eye for detail, a solid understanding of UI/UX principles, and the ability to translate ideas into practical, user-focused products. Sneha's proactive approach, adaptability, and leadership potential make her someone who can add real value to any team she works with.",
+    author: "Aditya Kushwaha",
+    role: "Founder of Altacee",
+    emoji: "💬",
+  },
+  {
+    id: "hc-3",
+    quote: "Sneha interned with AIKO Technologies in 2025, designing and revamping the UI/UX of AIKO's Generative AI social networking app and bulk-image generator website. She is talented, intelligent, and highly motivated, with a strong understanding of organizational requirements. Her leadership came through clearly during the project — her voice is strong, and leadership is a real strength she brings to any organization.",
+    author: "Soham Pal",
+    role: "Director, AIKO Technology Pvt Ltd",
+    emoji: "💬",
+  },
+]
 
 // Work Experience — fanned card stack data
 const AIML_BADGE = { badgeBg: "rgba(139,92,246,0.15)", badgeColor: "#a78bfa", badgeBorder: "0.5px solid rgba(139,92,246,0.3)" };
@@ -226,49 +200,63 @@ export default function Portfolio() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [hoveredExp, setHoveredExp] = useState<number | null>(null);
 
-  // ── User Testimonials ──────────────────────────────────────────────
-  interface UserTestimonial { id: string; quote: string; author: string; role: string; emoji: string; }
-  const [userTestimonials, setUserTestimonials] = useState<UserTestimonial[]>([]);
+  // ── Testimonials (Firebase Firestore) ──────────────────────────────
+  const [dbTestimonials, setDbTestimonials] = useState<Testimonial[]>([]);
+  const [loadingT, setLoadingT] = useState(true);
   const [showTForm, setShowTForm] = useState(false);
-  const [editingTId, setEditingTId] = useState<string | null>(null);
   const [tForm, setTForm] = useState({ quote: '', author: '', role: '', emoji: '💬' });
+  const [tSubmitting, setTSubmitting] = useState(false);
+  const [tSubmitted, setTSubmitted] = useState(false);
 
+  // Fetch only approved testimonials, newest first (sorted client-side to avoid a composite index)
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem('sneha-portfolio-testimonials');
-      if (raw) setUserTestimonials(JSON.parse(raw));
-    } catch {}
+    (async () => {
+      try {
+        const snap = await getDocs(query(collection(db, 'testimonials'), where('approved', '==', true)));
+        const list = snap.docs.map((d) => {
+          const data = d.data() as { quote: string; author: string; role: string; emoji: string; createdAt?: { seconds: number } };
+          return { id: d.id, quote: data.quote, author: data.author, role: data.role, emoji: data.emoji, _ts: data.createdAt?.seconds ?? 0 };
+        });
+        list.sort((a, b) => b._ts - a._ts);
+        setDbTestimonials(list.map(({ _ts, ...t }) => t));
+      } catch (e) {
+        console.error('Failed to load testimonials:', e);
+      } finally {
+        setLoadingT(false);
+      }
+    })();
   }, []);
 
-  const persistUT = (list: UserTestimonial[]) => {
-    localStorage.setItem('sneha-portfolio-testimonials', JSON.stringify(list));
-    setUserTestimonials(list);
-  };
+  // Merged list shown in the grid: hardcoded always first, then approved submissions
+  const allTestimonials: Testimonial[] = [...HARDCODED_TESTIMONIALS, ...dbTestimonials];
 
   const openAddForm = () => {
     setTForm({ quote: '', author: '', role: '', emoji: '💬' });
-    setEditingTId(null);
+    setTSubmitted(false);
     setShowTForm(true);
   };
 
-  const openEditForm = (t: UserTestimonial) => {
-    setTForm({ quote: t.quote, author: t.author, role: t.role, emoji: t.emoji });
-    setEditingTId(t.id);
-    setShowTForm(true);
-  };
-
-  const submitTForm = () => {
-    if (!tForm.quote.trim() || !tForm.author.trim()) return;
-    if (editingTId) {
-      persistUT(userTestimonials.map(t => t.id === editingTId ? { ...t, ...tForm } : t));
-    } else {
-      persistUT([...userTestimonials, { id: Date.now().toString(), ...tForm }]);
+  const submitTForm = async () => {
+    if (!tForm.quote.trim() || !tForm.author.trim() || tSubmitting) return;
+    setTSubmitting(true);
+    try {
+      await addDoc(collection(db, 'testimonials'), {
+        quote: tForm.quote.trim(),
+        author: tForm.author.trim(),
+        role: tForm.role.trim(),
+        emoji: tForm.emoji,
+        approved: false,
+        createdAt: serverTimestamp(),
+      });
+      setTSubmitted(true);
+      setTForm({ quote: '', author: '', role: '', emoji: '💬' });
+    } catch (e) {
+      console.error('Failed to submit testimonial:', e);
+      alert('Could not submit your testimonial. Please try again.');
+    } finally {
+      setTSubmitting(false);
     }
-    setShowTForm(false);
-    setEditingTId(null);
   };
-
-  const deleteUT = (id: string) => persistUT(userTestimonials.filter(t => t.id !== id));
   // ──────────────────────────────────────────────────────────────────
 
   const projectsData = [
@@ -652,7 +640,7 @@ export default function Portfolio() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#11071F" }}>
+    <div className="min-h-screen overflow-x-hidden" style={{ backgroundColor: "#11071F" }}>
       {/* Gooey Navigation Bar */}
       <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
         <nav className="flex items-center justify-between px-8 py-4" onClick={handleNavClick}>
@@ -734,10 +722,10 @@ export default function Portfolio() {
         </nav>
       </FadeContent>
 
-      <div id="home" className="flex relative" style={{ overflow: 'hidden' }}>
+      <div id="home" className="flex relative" style={{ overflowX: 'hidden' }}>
         <NeuralBackground />
-        {/* Social Media Sidebar — fixed to left edge, vertically centred */}
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center gap-5">
+        {/* Social Media Sidebar — fixed to left edge, vertically centred (desktop only) */}
+        <div className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 flex-col items-center gap-5">
           {socialLinks.map((social) => {
             const IconComponent = social.icon;
             return (
@@ -763,7 +751,7 @@ export default function Portfolio() {
         {/* End Social Media Sidebar */}
 
         {/* Main Content - Centered Container */}
-        <div className="w-full min-h-[calc(100vh-80px)] flex items-center justify-center relative">
+        <div className="w-full py-6 md:py-0 md:min-h-[calc(100dvh-80px)] flex items-center justify-center relative">
           {/* Centered Bitmoji and Text */}
           <div className="flex flex-col md:flex-row items-center justify-center max-w-2xl mx-auto space-y-10 md:space-y-0 md:space-x-16">
             {/* Bitmoji */}
@@ -1021,7 +1009,7 @@ export default function Portfolio() {
   </div>
 
   {/* Project Category Navigation */}
-  <div className="flex justify-center gap-48 mt-8 mb-16">
+  <div className="flex flex-wrap justify-center gap-6 sm:gap-16 md:gap-48 mt-8 mb-16">
     <button
       className={`text-lg font-medium transition-all duration-300 uppercase tracking-wider pb-1 ${
         activeCategory === 'AI/ML' ? 'text-white border-b-2 border-[#7127BA]' : 'text-white/60 hover:text-white'
@@ -1143,14 +1131,14 @@ export default function Portfolio() {
           position: 'absolute',
           left: 0,
           top: '50%',
-          width: '100vw',
-          height: '220px',
+          width: '100%',
+          height: '320px',
           transform: 'translateY(-50%)',
           zIndex: 0,
           pointerEvents: 'none',
         }}>
           <svg width="100%" height="100%" viewBox="0 0 1920 320" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style={{ width: '100%', height: '100%' }}>
-            <path d="M0,160 Q960,480 1920,160 L1920,320 L0,320 Z" fill="url(#purpleGradient)" />
+            <path d="M0,120 Q960,420 1920,120 L1920,320 L0,320 Z" fill="url(#purpleGradient)" />
             <defs>
               <linearGradient id="purpleGradient" x1="0" y1="0" x2="1920" y2="320" gradientUnits="userSpaceOnUse">
                 <stop stopColor="#7127BA" />
@@ -1160,7 +1148,7 @@ export default function Portfolio() {
           </svg>
         </div>
         {/* CurvedLoop text */}
-        <div className="w-full flex items-center justify-center relative z-10" style={{ minHeight: '100px' }}>
+        <div className="w-full flex items-center justify-center relative z-10" style={{ minHeight: '100px', transform: 'translateY(40px)' }}>
           <CurvedLoop
             marqueeText="Large Language Models ✦ RAG Pipelines ✦ PyTorch ✦ TensorFlow ✦ Scikit-learn ✦ HuggingFace ✦ LangChain ✦ Fine-Tuning ✦ Prompt Engineering ✦ Vector Databases ✦ SHAP ✦ Grad-CAM ✦ Transformer Architecture ✦ Model Deployment ✦ Next.js ✦ React ✦ TypeScript ✦ Node.js ✦ REST APIs ✦ Vercel ✦ Git ✦ Python ✦ Deep Learning ✦ Neural Networks ✦ XAI ✦"
             speed={2}
@@ -1384,36 +1372,28 @@ export default function Portfolio() {
         </motion.button>
 
         {/* Cards */}
-        {userTestimonials.length === 0 ? (
-          <p className="text-white/20 text-sm italic">No testimonials yet — be the first!</p>
+        {loadingT ? (
+          <div className="flex flex-col items-center gap-3 py-10">
+            <div className="w-9 h-9 rounded-full border-2 border-[#7127BA]/30 border-t-[#B18CFE] animate-spin" />
+            <span className="text-white/40 text-sm">Loading testimonials…</span>
+          </div>
         ) : (
           <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence>
-              {userTestimonials.map((t) => (
+              {allTestimonials.map((t) => (
                 <motion.div
                   key={t.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.92 }}
                   transition={{ duration: 0.28 }}
-                  className="group relative flex flex-col gap-4 bg-[#160d2e] border border-[#7127BA]/25 rounded-2xl p-6 hover:border-[#7127BA]/60 transition-all"
+                  className="relative flex flex-col gap-4 bg-[#160d2e] border border-[#7127BA]/25 rounded-2xl p-6 hover:border-[#7127BA]/60 transition-all"
                 >
                   <span className="text-3xl leading-none">{t.emoji}</span>
                   <p className="text-white/80 text-sm leading-relaxed flex-1">&ldquo;{t.quote}&rdquo;</p>
                   <div className="pt-3 border-t border-white/10">
                     <p className="text-[#B18CFE] text-sm font-semibold">&mdash; {t.author}</p>
                     {t.role && <p className="text-white/35 text-xs mt-0.5">{t.role}</p>}
-                  </div>
-                  {/* Edit / Delete on hover */}
-                  <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => openEditForm(t)} title="Edit"
-                      className="w-7 h-7 flex items-center justify-center rounded-full bg-[#7127BA]/30 hover:bg-[#7127BA]/70 transition">
-                      <svg width="12" height="12" fill="none" stroke="#B18CFE" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                    <button onClick={() => deleteUT(t.id)} title="Delete"
-                      className="w-7 h-7 flex items-center justify-center rounded-full bg-red-500/20 hover:bg-red-500/60 transition">
-                      <svg width="12" height="12" fill="none" stroke="#ff7070" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
-                    </button>
                   </div>
                 </motion.div>
               ))}
@@ -1441,46 +1421,62 @@ export default function Portfolio() {
               >
                 <div className="flex items-center justify-between">
                   <h3 className="text-white text-lg font-bold" style={{ fontFamily: 'Jua, sans-serif' }}>
-                    {editingTId ? 'Edit Testimonial' : 'Leave a Testimonial'}
+                    Leave a Testimonial
                   </h3>
                   <button onClick={() => setShowTForm(false)}
                     className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/15 text-white/50 hover:text-white transition text-sm">
                     ✕
                   </button>
                 </div>
-                <div className="flex gap-2">
-                  {['💬','⭐','🚀','🔥','💡','🎯','🤝','🌟'].map(em => (
-                    <button key={em} onClick={() => setTForm(f => ({ ...f, emoji: em }))}
-                      className={`text-lg p-1.5 rounded-lg transition-all ${tForm.emoji === em ? 'bg-[#7127BA]/60 scale-110 ring-1 ring-[#B18CFE]/50' : 'hover:bg-white/10'}`}>
-                      {em}
+
+                {tSubmitted ? (
+                  <div className="flex flex-col items-center text-center gap-4 py-6">
+                    <div className="w-14 h-14 rounded-full bg-[#7127BA]/20 flex items-center justify-center text-3xl">🎉</div>
+                    <p className="text-white font-semibold">Thank you! Your testimonial is pending review.</p>
+                    <p className="text-white/40 text-sm">It will appear here once Sneha approves it.</p>
+                    <button onClick={() => setShowTForm(false)}
+                      className="mt-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#7127BA] to-[#B18CFE] text-white text-sm font-semibold hover:opacity-90 transition">
+                      Close
                     </button>
-                  ))}
-                </div>
-                <textarea
-                  value={tForm.quote}
-                  onChange={e => setTForm(f => ({ ...f, quote: e.target.value }))}
-                  placeholder="Share your experience working with Sneha..."
-                  rows={4}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 resize-none focus:outline-none focus:border-[#7127BA] transition"
-                />
-                <input value={tForm.author} onChange={e => setTForm(f => ({ ...f, author: e.target.value }))}
-                  placeholder="Your name *"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#7127BA] transition"
-                />
-                <input value={tForm.role} onChange={e => setTForm(f => ({ ...f, role: e.target.value }))}
-                  placeholder="Your role / company (optional)"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#7127BA] transition"
-                />
-                <div className="flex gap-3">
-                  <button onClick={() => setShowTForm(false)}
-                    className="flex-1 py-2.5 rounded-xl border border-white/10 text-white/40 text-sm hover:bg-white/5 transition">
-                    Cancel
-                  </button>
-                  <button onClick={submitTForm} disabled={!tForm.quote.trim() || !tForm.author.trim()}
-                    className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#7127BA] to-[#B18CFE] text-white text-sm font-semibold hover:opacity-90 transition disabled:opacity-35 disabled:cursor-not-allowed">
-                    {editingTId ? 'Save Changes' : 'Submit'}
-                  </button>
-                </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex gap-2">
+                      {['💬','⭐','🚀','🔥','💡','🎯','🤝','🌟'].map(em => (
+                        <button key={em} onClick={() => setTForm(f => ({ ...f, emoji: em }))}
+                          className={`text-lg p-1.5 rounded-lg transition-all ${tForm.emoji === em ? 'bg-[#7127BA]/60 scale-110 ring-1 ring-[#B18CFE]/50' : 'hover:bg-white/10'}`}>
+                          {em}
+                        </button>
+                      ))}
+                    </div>
+                    <textarea
+                      value={tForm.quote}
+                      onChange={e => setTForm(f => ({ ...f, quote: e.target.value }))}
+                      placeholder="Share your experience working with Sneha..."
+                      rows={4}
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 resize-none focus:outline-none focus:border-[#7127BA] transition"
+                    />
+                    <input value={tForm.author} onChange={e => setTForm(f => ({ ...f, author: e.target.value }))}
+                      placeholder="Your name *"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#7127BA] transition"
+                    />
+                    <input value={tForm.role} onChange={e => setTForm(f => ({ ...f, role: e.target.value }))}
+                      placeholder="Your role / company (optional)"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/25 focus:outline-none focus:border-[#7127BA] transition"
+                    />
+                    <div className="flex gap-3">
+                      <button onClick={() => setShowTForm(false)}
+                        className="flex-1 py-2.5 rounded-xl border border-white/10 text-white/40 text-sm hover:bg-white/5 transition">
+                        Cancel
+                      </button>
+                      <button onClick={submitTForm} disabled={!tForm.quote.trim() || !tForm.author.trim() || tSubmitting}
+                        className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-[#7127BA] to-[#B18CFE] text-white text-sm font-semibold hover:opacity-90 transition disabled:opacity-35 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        {tSubmitting && <span className="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />}
+                        {tSubmitting ? 'Submitting…' : 'Submit'}
+                      </button>
+                    </div>
+                  </>
+                )}
               </motion.div>
             </motion.div>
           )}
@@ -1497,7 +1493,7 @@ export default function Portfolio() {
         <p className="text-lg md:text-xl text-white/80 text-center mb-8 max-w-2xl" style={{ fontFamily: 'inherit' }}>
           If you'd like to work together or have a project in mind, I'd love to hear from you!
         </p>
-        <div className="max-w-5xl w-full flex flex-col md:flex-row items-end bg-transparent rounded-2xl shadow-none">
+        <div className="max-w-5xl w-full flex flex-col md:flex-row items-center md:items-end bg-transparent rounded-2xl shadow-none">
          {/* Right: Open For Section */}
           <div className="flex-1 flex flex-col justify-center h-full items-center px-8 py-8">
             <div className="flex flex-col items-center h-full justify-center w-full">
