@@ -1,20 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { db } from "../../../lib/firebase";
-import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { getAllTestimonials, updateTestimonial, deleteTestimonial } from "../../../services/testimonialService";
+import type { AdminTestimonial } from "../../../types/testimonial";
 
 const ADMIN_PASSWORD = "sneha2024";
-
-interface AdminTestimonial {
-  id: string;
-  quote: string;
-  author: string;
-  role: string;
-  emoji: string;
-  approved: boolean;
-  createdAt?: { seconds: number };
-}
 
 export default function AdminTestimonials() {
   const [authed, setAuthed] = useState(false);
@@ -28,13 +18,11 @@ export default function AdminTestimonials() {
   const load = async () => {
     setLoading(true);
     try {
-      const snap = await getDocs(collection(db, "testimonials"));
-      const list = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<AdminTestimonial, "id">) }));
-      list.sort((a, b) => (b.createdAt?.seconds ?? 0) - (a.createdAt?.seconds ?? 0));
+      const list = await getAllTestimonials();
       setItems(list);
     } catch (e) {
       console.error("Failed to load testimonials:", e);
-      alert("Failed to load. Check Firestore rules / connection.");
+      alert("Failed to load. Check your Supabase connection.");
     } finally {
       setLoading(false);
     }
@@ -56,7 +44,7 @@ export default function AdminTestimonials() {
   const approve = async (id: string) => {
     setBusyId(id);
     try {
-      await updateDoc(doc(db, "testimonials", id), { approved: true });
+      await updateTestimonial(id, { approved: true });
       setItems((prev) => prev.map((t) => (t.id === id ? { ...t, approved: true } : t)));
     } catch (e) {
       console.error(e);
@@ -70,7 +58,7 @@ export default function AdminTestimonials() {
     if (!confirm("Permanently delete this testimonial?")) return;
     setBusyId(id);
     try {
-      await deleteDoc(doc(db, "testimonials", id));
+      await deleteTestimonial(id);
       setItems((prev) => prev.filter((t) => t.id !== id));
     } catch (e) {
       console.error(e);

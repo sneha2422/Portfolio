@@ -4,7 +4,7 @@ import React from "react"
 
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Linkedin, Github, Instagram, Eye } from "lucide-react"
 import BlurText from "../components/BlurText"
 import AnimatedContent from "../components/AnimatedContent"
@@ -29,37 +29,10 @@ import { useRef } from "react";
 import SplitText from "../components/SplitText";
 import NeuralBackground from "../components/NeuralBackground";
 
-import { db } from "../lib/firebase"
-import { collection, addDoc, getDocs, query, where, serverTimestamp } from "firebase/firestore"
+import { getTestimonials, createTestimonial } from "../services/testimonialService"
+import type { Testimonial } from "../types/testimonial"
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin)
-
-interface Testimonial { id: string; quote: string; author: string; role: string; emoji: string; }
-
-// Always-on testimonials shown at the top of the grid
-const HARDCODED_TESTIMONIALS: Testimonial[] = [
-  {
-    id: "hc-1",
-    quote: "Working with Sneha as a Product Designer was an absolute pleasure. She brought creativity, dedication, and a collaborative spirit to the table, making the whole process seamless and enjoyable. Her attention to detail and problem-solving abilities truly stood out.",
-    author: "Trisha Mani",
-    role: "Design Duh, Lead",
-    emoji: "💬",
-  },
-  {
-    id: "hc-2",
-    quote: "Sneha worked with us at Altacee, contributing to the design and development of modern web solutions while demonstrating a strong sense of ownership and creativity. She has a sharp eye for detail, a solid understanding of UI/UX principles, and the ability to translate ideas into practical, user-focused products. Sneha's proactive approach, adaptability, and leadership potential make her someone who can add real value to any team she works with.",
-    author: "Aditya Kushwaha",
-    role: "Founder of Altacee",
-    emoji: "💬",
-  },
-  {
-    id: "hc-3",
-    quote: "Sneha interned with AIKO Technologies in 2025, designing and revamping the UI/UX of AIKO's Generative AI social networking app and bulk-image generator website. She is talented, intelligent, and highly motivated, with a strong understanding of organizational requirements. Her leadership came through clearly during the project — her voice is strong, and leadership is a real strength she brings to any organization.",
-    author: "Soham Pal",
-    role: "Director, AIKO Technology Pvt Ltd",
-    emoji: "💬",
-  },
-]
 
 // Work Experience — fanned card stack data
 const AIML_BADGE = { badgeBg: "rgba(139,92,246,0.15)", badgeColor: "#a78bfa", badgeBorder: "0.5px solid rgba(139,92,246,0.3)" };
@@ -200,35 +173,33 @@ export default function Portfolio() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [hoveredExp, setHoveredExp] = useState<number | null>(null);
 
-  // ── Testimonials (Firebase Firestore) ──────────────────────────────
+  // ── Testimonials (Supabase) ─────────────────────────────────────────
   const [dbTestimonials, setDbTestimonials] = useState<Testimonial[]>([]);
   const [loadingT, setLoadingT] = useState(true);
+  const [errorT, setErrorT] = useState(false);
   const [showTForm, setShowTForm] = useState(false);
   const [tForm, setTForm] = useState({ quote: '', author: '', role: '', emoji: '💬' });
   const [tSubmitting, setTSubmitting] = useState(false);
   const [tSubmitted, setTSubmitted] = useState(false);
 
-  // Fetch only approved testimonials, newest first (sorted client-side to avoid a composite index)
-  useEffect(() => {
-    (async () => {
-      try {
-        const snap = await getDocs(query(collection(db, 'testimonials'), where('approved', '==', true)));
-        const list = snap.docs.map((d) => {
-          const data = d.data() as { quote: string; author: string; role: string; emoji: string; createdAt?: { seconds: number } };
-          return { id: d.id, quote: data.quote, author: data.author, role: data.role, emoji: data.emoji, _ts: data.createdAt?.seconds ?? 0 };
-        });
-        list.sort((a, b) => b._ts - a._ts);
-        setDbTestimonials(list.map(({ _ts, ...t }) => t));
-      } catch (e) {
-        console.error('Failed to load testimonials:', e);
-      } finally {
-        setLoadingT(false);
-      }
-    })();
+  // Fetch approved testimonials, newest first (ordering handled in the service)
+  const loadTestimonials = useCallback(async () => {
+    setLoadingT(true);
+    setErrorT(false);
+    try {
+      const list = await getTestimonials();
+      setDbTestimonials(list);
+    } catch (e) {
+      console.error('Failed to load testimonials:', e);
+      setErrorT(true);
+    } finally {
+      setLoadingT(false);
+    }
   }, []);
 
-  // Merged list shown in the grid: hardcoded always first, then approved submissions
-  const allTestimonials: Testimonial[] = [...HARDCODED_TESTIMONIALS, ...dbTestimonials];
+  useEffect(() => {
+    loadTestimonials();
+  }, [loadTestimonials]);
 
   const openAddForm = () => {
     setTForm({ quote: '', author: '', role: '', emoji: '💬' });
@@ -240,18 +211,20 @@ export default function Portfolio() {
     if (!tForm.quote.trim() || !tForm.author.trim() || tSubmitting) return;
     setTSubmitting(true);
     try {
-      await addDoc(collection(db, 'testimonials'), {
-        quote: tForm.quote.trim(),
-        author: tForm.author.trim(),
-        role: tForm.role.trim(),
-        emoji: tForm.emoji,
-        approved: false,
-        createdAt: serverTimestamp(),
-      });
+      const created = await createTestimonial(tForm);
+      // Show it immediately (newest first) — no refresh needed. It is already
+      // persisted in Supabase, so it also survives reloads.
+      setDbTestimonials((prev) => [created, ...prev]);
       setTSubmitted(true);
       setTForm({ quote: '', author: '', role: '', emoji: '💬' });
     } catch (e) {
-      console.error('Failed to submit testimonial:', e);
+      // Surface the real Supabase/Postgres error instead of "[object Object]"
+      console.error('Failed to submit testimonial:', JSON.stringify(e, null, 2));
+      const err = e as { message?: string; details?: string; hint?: string; code?: string };
+      if (err?.message) console.error('message:', err.message);
+      if (err?.details) console.error('details:', err.details);
+      if (err?.hint) console.error('hint:', err.hint);
+      if (err?.code) console.error('code:', err.code);
       alert('Could not submit your testimonial. Please try again.');
     } finally {
       setTSubmitting(false);
@@ -1377,10 +1350,22 @@ export default function Portfolio() {
             <div className="w-9 h-9 rounded-full border-2 border-[#7127BA]/30 border-t-[#B18CFE] animate-spin" />
             <span className="text-white/40 text-sm">Loading testimonials…</span>
           </div>
+        ) : errorT ? (
+          <div className="flex flex-col items-center gap-4 py-10">
+            <p className="text-white/60 text-sm">Couldn&apos;t load testimonials right now.</p>
+            <button
+              onClick={loadTestimonials}
+              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#7127BA] to-[#B18CFE] text-white text-sm font-semibold hover:opacity-90 transition"
+            >
+              Retry
+            </button>
+          </div>
+        ) : dbTestimonials.length === 0 ? (
+          <p className="text-white/40 text-sm py-10 text-center">No testimonials yet. Be the first to leave one!</p>
         ) : (
           <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence>
-              {allTestimonials.map((t) => (
+              {dbTestimonials.map((t) => (
                 <motion.div
                   key={t.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -1432,8 +1417,8 @@ export default function Portfolio() {
                 {tSubmitted ? (
                   <div className="flex flex-col items-center text-center gap-4 py-6">
                     <div className="w-14 h-14 rounded-full bg-[#7127BA]/20 flex items-center justify-center text-3xl">🎉</div>
-                    <p className="text-white font-semibold">Thank you! Your testimonial is pending review.</p>
-                    <p className="text-white/40 text-sm">It will appear here once Sneha approves it.</p>
+                    <p className="text-white font-semibold">Thank you! Your testimonial has been added.</p>
+                    <p className="text-white/40 text-sm">Thanks for sharing your experience.</p>
                     <button onClick={() => setShowTForm(false)}
                       className="mt-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#7127BA] to-[#B18CFE] text-white text-sm font-semibold hover:opacity-90 transition">
                       Close
