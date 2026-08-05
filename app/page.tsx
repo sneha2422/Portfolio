@@ -1309,6 +1309,7 @@ export default function Portfolio() {
           </div>
         </div>
       </section>
+
       {/* Quote Section */}
       <section className="w-full flex flex-col items-center py-20 px-2" style={{ backgroundColor: '#11071F' }}>
         <div className="flex flex-col items-center w-full">
@@ -1508,7 +1509,7 @@ export default function Portfolio() {
           </svg>
         </span>
                   </div>
-                  <a href="./sneha_resume_ml.pdf" download className="px-6 py-3 rounded-full bg-[#763CAC] text-white font-bold shadow-lg hover:bg-white hover:text-[#763CAC] transition flex items-center gap-2 mt-4 self-center">
+                  <a href="./Sneha_resume_ml_updated.pdf" download className="px-6 py-3 rounded-full bg-[#763CAC] text-white font-bold shadow-lg hover:bg-white hover:text-[#763CAC] transition flex items-center gap-2 mt-4 self-center">
                     <span className="text-xl">Resume</span>
                   </a>
                 </div> 
